@@ -1,0 +1,6 @@
+{
+  "name": "DotRepo - Enterprise Cloud, Software, Data & AI Ecosystem",
+  "description": "DotRepo provides enterprise cloud software, intelligent applications, data platforms, and AI-powered technologies that power modern businesses.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -179,7 +179,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   onClick={() => onNavigate('about')}
                   className="hover:text-neutral-950 transition-colors cursor-pointer text-left font-medium"
                 >
-                  Global Offices (Bangalore HQ)
+                  Offices Across India (Bangalore HQ)
                 </button>
               </li>
             </ul>
@@ -212,15 +212,35 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           </div>
         </div>
 
-        {/* Bottom Copyright & Disclaimer */}
-        <div className="pt-8 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-neutral-500">
-          <div>
-            © 2026 DotRepo Corp. Enterprise Platform. Headquartered in Bangalore, Karnataka, India.
-          </div>
-          <div className="flex items-center gap-4 text-neutral-500">
-            <span>Global Cloud Nodes: Bangalore, Frankfurt, SF, Singapore, London</span>
-            <span>·</span>
-            <span>Security by Design</span>
+        {/* Bottom Copyright & Disclaimer - Dark Theme */}
+        <div className="pt-8 border-t border-neutral-200">
+          <div className="rounded-2xl bg-neutral-950 text-neutral-300 p-6 sm:p-7 border border-neutral-800 shadow-xl flex flex-col md:flex-row items-center justify-between gap-6 text-[12px]">
+            <div className="space-y-1.5 text-center md:text-left">
+              <div className="text-white font-semibold text-xs sm:text-sm tracking-tight flex flex-wrap items-center justify-center md:justify-start gap-2">
+                <span>© 2026 DotRepo Corp. Enterprise Platform.</span>
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium bg-emerald-950 text-emerald-400 border border-emerald-800/80">
+                  Headquartered in India
+                </span>
+              </div>
+              <p className="text-neutral-400 text-[11px] leading-relaxed">
+                Operating pan-India technology campuses: Bangalore (HQ), Hyderabad, Pune, Chennai, and Mumbai.
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-6 text-neutral-400 text-xs shrink-0">
+              <a
+                href="mailto:DOTREPOCORP@GMAIL.COM"
+                className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-700 hover:border-emerald-500/60 text-white hover:text-emerald-300 transition-colors font-mono font-medium shadow-xs"
+              >
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span>DOTREPOCORP@GMAIL.COM</span>
+              </a>
+              <div className="flex items-center gap-2 text-[11px] text-neutral-400">
+                <span>All India Cloud Nodes</span>
+                <span className="text-neutral-600">·</span>
+                <span className="text-emerald-400 font-semibold">Security by Design</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

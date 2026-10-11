@@ -309,8 +309,10 @@ export const ContactPage: React.FC<ContactPageProps> = ({ initialTopic, onNaviga
                 <div className="flex items-start gap-3">
                   <Mail className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
-                    <span className="text-neutral-500 block font-mono text-[11px]">Enterprise Inquiries:</span>
-                    <span className="text-neutral-950 font-bold">enterprise@dotrepo.com</span>
+                    <span className="text-neutral-500 block font-mono text-[11px]">Direct Enterprise & Inquiries:</span>
+                    <a href="mailto:DOTREPOCORP@GMAIL.COM" className="text-neutral-950 font-bold hover:text-emerald-600 transition-colors">
+                      DOTREPOCORP@GMAIL.COM
+                    </a>
                   </div>
                 </div>
 
@@ -318,26 +320,26 @@ export const ContactPage: React.FC<ContactPageProps> = ({ initialTopic, onNaviga
                   <Clock className="w-4 h-4 text-purple-600 shrink-0 mt-0.5" />
                   <div>
                     <span className="text-neutral-500 block font-mono text-[11px]">Support Availability:</span>
-                    <span className="text-neutral-950 font-bold">24/7/365 Tier-1 Dedicated Support</span>
+                    <span className="text-neutral-950 font-bold">24/7/365 Tier-1 Dedicated Support (India IST & Global)</span>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="p-6 rounded-2xl bg-white border border-neutral-200 space-y-3 shadow-sm">
-              <h3 className="text-base font-bold text-neutral-950">Corporate Locations</h3>
+              <h3 className="text-base font-bold text-neutral-950">Corporate Locations (India)</h3>
               <div className="space-y-2.5 text-xs text-neutral-700">
                 <div className="pb-2 border-b border-neutral-100">
-                  <span className="font-bold text-neutral-950 block">San Francisco (Global HQ)</span>
-                  <span className="text-neutral-500 text-[11px]">100 Market Street, Suite 2400, San Francisco, CA</span>
+                  <span className="font-bold text-neutral-950 block">Bangalore (Core Headquarters)</span>
+                  <span className="text-neutral-500 text-[11px]">Outer Ring Road / Indiranagar Tech Corridor, Bangalore, Karnataka, India</span>
                 </div>
                 <div className="pb-2 border-b border-neutral-100">
-                  <span className="font-bold text-neutral-950 block">Frankfurt (EU Sovereignty Hub)</span>
-                  <span className="text-neutral-500 text-[11px]">Mainzer Landstraße 46, 60325 Frankfurt am Main</span>
+                  <span className="font-bold text-neutral-950 block">Hyderabad (Cloud & AI Hub)</span>
+                  <span className="text-neutral-500 text-[11px]">HITEC City, Madhapur, Hyderabad, Telangana, India</span>
                 </div>
                 <div>
-                  <span className="font-bold text-neutral-950 block">Singapore (APAC Operations)</span>
-                  <span className="text-neutral-500 text-[11px]">Marina Bay Financial Centre Tower 2, Singapore</span>
+                  <span className="font-bold text-neutral-950 block">Pune & Chennai (R&D & Engineering)</span>
+                  <span className="text-neutral-500 text-[11px]">Hinjawadi Infotech Park, Pune & OMR IT Expressway, Chennai, India</span>
                 </div>
               </div>
             </div>

@@ -360,7 +360,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
               <span>Solutions</span>
             </button>
 
-            {/* 8. Bangalore HQ / About */}
+            {/* 8. About Section */}
             <button
               onClick={() => handleNavClick('about')}
               className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium rounded-md transition-all cursor-pointer whitespace-nowrap ${
@@ -370,7 +370,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
               }`}
             >
               <Building2 className="w-3 h-3 text-neutral-400" />
-              <span>Bangalore HQ</span>
+              <span>About</span>
             </button>
           </div>
         </div>

@@ -28,11 +28,11 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenContactM
   ];
 
   const locations = [
-    { city: 'Bangalore (Bengaluru)', role: 'Global Headquarters & Engineering Campus', address: 'Outer Ring Road / Indiranagar Tech Corridor, Bangalore, Karnataka, India' },
-    { city: 'San Francisco', role: 'Americas Enterprise & Strategic Alliances', address: '100 Market St, Suite 2400, San Francisco, CA' },
-    { city: 'Frankfurt', role: 'European Cloud Operations & Sovereignty Hub', address: 'Mainzer Landstraße 46, 60325 Frankfurt' },
-    { city: 'Singapore', role: 'Asia-Pacific Enterprise Engineering', address: 'Marina Bay Financial Centre Tower 2, Singapore' },
-    { city: 'London', role: 'Financial Technology Center of Excellence', address: '1 Canada Square, Canary Wharf, London' },
+    { city: 'Bangalore (Bengaluru)', role: 'Headquarters & Core Engineering Campus', address: 'Outer Ring Road / Indiranagar Tech Corridor, Bangalore, Karnataka, India' },
+    { city: 'Hyderabad', role: 'Enterprise Cloud & AI Systems Hub', address: 'HITEC City, Madhapur, Hyderabad, Telangana, India' },
+    { city: 'Pune', role: 'Distributed Systems & Database R&D', address: 'Hinjawadi Rajiv Gandhi Infotech Park, Pune, Maharashtra, India' },
+    { city: 'Chennai', role: 'FinTech & High-Frequency Operations Center', address: 'OMR IT Expressway, Taramani, Chennai, Tamil Nadu, India' },
+    { city: 'Mumbai', role: 'Enterprise Solutions & Client Experience Center', address: 'Bandra Kurla Complex (BKC), Mumbai, Maharashtra, India' },
   ];
 
   return (
@@ -117,16 +117,16 @@ export const AboutPage: React.FC<AboutPageProps> = ({ onNavigate, onOpenContactM
           </div>
         </div>
 
-        {/* Global Hubs */}
+        {/* India Hubs */}
         <div className="mt-16">
           <span className="text-xs uppercase tracking-wider font-semibold text-neutral-500">
-            Worldwide Operations
+            Operations Across India
           </span>
           <h2 className="text-2xl font-bold text-neutral-950 mt-1">
-            Corporate Hubs & Technology Centers
+            Corporate Hubs & Engineering Centers (India)
           </h2>
 
-          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             {locations.map((loc) => (
               <div
                 key={loc.city}

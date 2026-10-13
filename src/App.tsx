@@ -18,12 +18,15 @@ import { AboutPage } from './pages/AboutPage';
 import { CareersPage } from './pages/CareersPage';
 import { ContactPage } from './pages/ContactPage';
 import { InternshipPage } from './pages/InternshipPage';
+import { AdminPage } from './pages/AdminPage';
+import { InternshipRegistrationModal } from './components/InternshipRegistrationModal';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
   const [subId, setSubId] = useState<string | undefined>(undefined);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [contactModalTopic, setContactModalTopic] = useState<string | null>(null);
+  const [globalRegTrackId, setGlobalRegTrackId] = useState<string | null>(null);
 
   // Sync with window.location.hash for shareable URLs and browser back/forward
   useEffect(() => {
@@ -47,6 +50,7 @@ export default function App() {
         'careers',
         'contact',
         'internship',
+        'admin',
       ];
       if (validPages.includes(pageCandidate)) {
         setCurrentPage(pageCandidate);
@@ -84,11 +88,16 @@ export default function App() {
     setContactModalTopic(null);
   };
 
+  const handleOpenRegistration = (trackId?: string) => {
+    setGlobalRegTrackId(trackId || 'frontend-intern');
+  };
+
   return (
     <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
       {/* Top Promotional Announcement Bar */}
       <UdacityTopBanner
         onExploreInternship={() => handleNavigate('internship')}
+        onOpenRegistration={() => handleOpenRegistration()}
       />
 
       {/* DotRepo Corp. Ease & Elegant Enterprise Navigation Bar (Mobile Adaptable) */}
@@ -97,6 +106,7 @@ export default function App() {
         onNavigate={handleNavigate}
         onOpenSearch={() => setIsSearchOpen(true)}
         onOpenContact={handleOpenContactModal}
+        onOpenRegistration={handleOpenRegistration}
       />
 
       {/* Main Content Area */}
@@ -105,12 +115,18 @@ export default function App() {
           <HomePage
             onNavigate={handleNavigate}
             onOpenContactModal={handleOpenContactModal}
+            onOpenRegistration={handleOpenRegistration}
           />
         )}
 
         {currentPage === 'internship' && (
-          <InternshipPage onNavigate={handleNavigate} />
+          <InternshipPage
+            onNavigate={handleNavigate}
+            onOpenRegistration={handleOpenRegistration}
+          />
         )}
+
+        {currentPage === 'admin' && <AdminPage />}
 
         {currentPage === 'products' && (
           <ProductsPage
@@ -193,6 +209,13 @@ export default function App() {
         isOpen={Boolean(contactModalTopic)}
         topic={contactModalTopic || undefined}
         onClose={handleCloseContactModal}
+      />
+
+      {/* Global Native Internship Registration & Razorpay Payment Modal */}
+      <InternshipRegistrationModal
+        isOpen={globalRegTrackId !== null}
+        initialTrackId={globalRegTrackId || undefined}
+        onClose={() => setGlobalRegTrackId(null)}
       />
     </div>
   );

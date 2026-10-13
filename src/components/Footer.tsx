@@ -239,6 +239,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 <span>All India Cloud Nodes</span>
                 <span className="text-neutral-600">·</span>
                 <span className="text-emerald-400 font-semibold">Security by Design</span>
+                <span className="text-neutral-600">·</span>
+                <button
+                  onClick={() => onNavigate('admin')}
+                  className="text-neutral-400 hover:text-orange-400 transition-colors font-mono cursor-pointer"
+                >
+                  Admin
+                </button>
               </div>
             </div>
           </div>

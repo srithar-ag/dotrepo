@@ -22,11 +22,13 @@ import {
 interface HomePageProps {
   onNavigate: (page: PageId, subId?: string) => void;
   onOpenContactModal: (topic?: string) => void;
+  onOpenRegistration?: (trackId?: string) => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   onNavigate,
   onOpenContactModal,
+  onOpenRegistration,
 }) => {
   return (
     <div className="flex flex-col bg-white text-neutral-900 selection:bg-blue-600 selection:text-white">
@@ -37,7 +39,10 @@ export const HomePage: React.FC<HomePageProps> = ({
       />
 
       {/* 2. Quarter-Section Feature: DotRepo Corp. Engineering & AI Internship Portal */}
-      <HomeInternshipTeaser onNavigate={onNavigate} />
+      <HomeInternshipTeaser
+        onNavigate={onNavigate}
+        onOpenRegistration={onOpenRegistration}
+      />
 
       {/* 3. Four Ecosystem Pillars (Cloud, Software, Data, AI) */}
       <EcosystemPillars onNavigate={onNavigate} />

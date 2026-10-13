@@ -14,9 +14,13 @@ import {
 
 interface HomeInternshipTeaserProps {
   onNavigate: (page: PageId) => void;
+  onOpenRegistration?: () => void;
 }
 
-export const HomeInternshipTeaser: React.FC<HomeInternshipTeaserProps> = ({ onNavigate }) => {
+export const HomeInternshipTeaser: React.FC<HomeInternshipTeaserProps> = ({
+  onNavigate,
+  onOpenRegistration,
+}) => {
   const tracksList = [
     { title: 'Frontend Intern', code: '/FE' },
     { title: 'Data Analyst Intern', code: '/DATA' },
@@ -75,16 +79,17 @@ export const HomeInternshipTeaser: React.FC<HomeInternshipTeaserProps> = ({ onNa
 
               {/* Action Buttons */}
               <div className="mt-6 flex flex-col sm:flex-row sm:items-center gap-3">
-                <a
-                  href={INTERNSHIP_FORM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => {
+                    if (onOpenRegistration) onOpenRegistration();
+                    else onNavigate('internship');
+                  }}
                   className="w-full sm:w-auto justify-center px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-extrabold text-xs transition-colors flex items-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/20"
                 >
                   <Send className="w-3.5 h-3.5" />
                   <span>Apply Now · Onboard as Intern</span>
-                  <ExternalLink className="w-3.5 h-3.5 opacity-80" />
-                </a>
+                  <ArrowRight className="w-3.5 h-3.5 opacity-80" />
+                </button>
                 <button
                   onClick={() => onNavigate('internship')}
                   className="w-full sm:w-auto justify-center px-5 py-3.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 font-semibold text-xs transition-colors flex items-center gap-2 cursor-pointer"

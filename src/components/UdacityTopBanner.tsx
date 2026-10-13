@@ -4,9 +4,13 @@ import { INTERNSHIP_FORM_URL } from '../data/internshipData';
 
 interface UdacityTopBannerProps {
   onExploreInternship?: () => void;
+  onOpenRegistration?: () => void;
 }
 
-export const UdacityTopBanner: React.FC<UdacityTopBannerProps> = ({ onExploreInternship }) => {
+export const UdacityTopBanner: React.FC<UdacityTopBannerProps> = ({
+  onExploreInternship,
+  onOpenRegistration,
+}) => {
   const [dismissed, setDismissed] = useState(false);
 
   if (dismissed) return null;
@@ -43,15 +47,16 @@ export const UdacityTopBanner: React.FC<UdacityTopBannerProps> = ({ onExploreInt
             </button>
           )}
 
-          <a
-            href={INTERNSHIP_FORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={() => {
+              if (onOpenRegistration) onOpenRegistration();
+              else if (onExploreInternship) onExploreInternship();
+            }}
             className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500 hover:bg-emerald-400 text-neutral-950 text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer shadow-xs whitespace-nowrap"
           >
             <span>Apply Now</span>
-            <ExternalLink className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
-          </a>
+            <ArrowRight className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+          </button>
 
           <button
             onClick={() => setDismissed(true)}

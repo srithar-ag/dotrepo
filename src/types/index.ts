@@ -9,7 +9,8 @@ export type PageId =
   | 'about'
   | 'careers'
   | 'contact'
-  | 'internship';
+  | 'internship'
+  | 'admin';
 
 export interface InternshipTrack {
   id: string;

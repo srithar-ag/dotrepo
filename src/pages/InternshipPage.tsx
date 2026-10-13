@@ -3,10 +3,10 @@ import {
   INTERNSHIP_TRACKS,
   INTERNSHIP_STEPS,
   INTERNSHIP_FAQS,
-  INTERNSHIP_FORM_URL,
 } from '../data/internshipData';
 import { InternshipTrack, PageId } from '../types';
 import { InternshipCredentialsPanel } from '../components/InternshipCredentialsPanel';
+import { InternshipRegistrationModal } from '../components/InternshipRegistrationModal';
 import {
   ArrowRight,
   ExternalLink,
@@ -34,13 +34,14 @@ import {
 
 interface InternshipPageProps {
   onNavigate: (page: PageId) => void;
+  onOpenRegistration?: (trackId?: string) => void;
 }
 
-export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) => {
+export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate, onOpenRegistration }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [selectedTrack, setSelectedTrack] = useState<InternshipTrack | null>(null);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
-  const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
+  const [internalRegTrackId, setInternalRegTrackId] = useState<string | null>(null);
 
   const categories = [
     { id: 'all', label: 'All 13 Tracks' },
@@ -67,9 +68,12 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
               (t.category.includes('Archival') || t.title.includes('Curation') || t.title.includes('Archive')))
         );
 
-  const handleOpenForm = (trackTitle?: string) => {
-    // Direct open to official form
-    window.open(INTERNSHIP_FORM_URL, '_blank', 'noopener,noreferrer');
+  const handleOpenForm = (trackId?: string) => {
+    if (onOpenRegistration) {
+      onOpenRegistration(trackId);
+    } else {
+      setInternalRegTrackId(trackId || 'frontend-intern');
+    }
   };
 
   return (
@@ -83,15 +87,13 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
             <span>Applications are open across all 13 technical & professional tracks.</span>
             <span className="hidden sm:inline text-neutral-400">· 100% Remote & Self-Paced</span>
           </div>
-          <a
-            href={INTERNSHIP_FORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 font-bold text-emerald-400 hover:text-emerald-300 transition-colors underline decoration-dotted"
+          <button
+            onClick={() => handleOpenForm()}
+            className="inline-flex items-center gap-1 font-bold text-emerald-400 hover:text-emerald-300 transition-colors underline decoration-dotted cursor-pointer"
           >
             <span>JOIN VIA OFFICIAL FORM</span>
             <ArrowRight className="w-3.5 h-3.5" />
-          </a>
+          </button>
         </div>
       </div>
 
@@ -135,16 +137,14 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
 
           {/* CTAs */}
           <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 w-full max-w-md mx-auto sm:max-w-none">
-            <a
-              href={INTERNSHIP_FORM_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+            <button
+              onClick={() => handleOpenForm()}
               className="w-full sm:w-auto justify-center px-7 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-extrabold text-sm transition-all shadow-lg shadow-emerald-500/25 flex items-center gap-2 cursor-pointer"
             >
               <Send className="w-4 h-4" />
               <span>Apply Now · Onboard as Intern Now</span>
-              <ExternalLink className="w-3.5 h-3.5 opacity-80" />
-            </a>
+              <ArrowRight className="w-3.5 h-3.5 opacity-80" />
+            </button>
             <button
               onClick={() => {
                 const el = document.getElementById('tracks-section');
@@ -369,7 +369,7 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
           </div>
 
           {/* Interactive Verified Credentials & Documents Specimen Panel */}
-          <InternshipCredentialsPanel />
+          <InternshipCredentialsPanel onApplyClick={() => handleOpenForm()} />
 
           {/* Tasteful Closing Line & Navigation CTA */}
           <div className="mt-14 pt-10 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
@@ -392,15 +392,13 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
                 <span>Explore Tracks</span>
                 <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
               </button>
-              <a
-                href={INTERNSHIP_FORM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => handleOpenForm()}
                 className="px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm shadow-orange-600/20"
               >
                 <span>Apply Now</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         </div>
@@ -511,15 +509,13 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
                     >
                       Details
                     </button>
-                    <a
-                      href={INTERNSHIP_FORM_URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <button
+                      onClick={() => handleOpenForm(track.id)}
                       className="px-3.5 py-1.5 rounded-lg text-xs font-bold text-neutral-950 bg-emerald-400 hover:bg-emerald-300 transition-colors flex items-center gap-1 cursor-pointer"
                     >
                       <span>Apply Now</span>
                       <ArrowRight className="w-3 h-3" />
-                    </a>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -577,14 +573,12 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
                 </li>
               </ul>
               <div className="mt-6">
-                <a
-                  href={INTERNSHIP_FORM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full block text-center py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-extrabold text-xs transition-colors shadow-md"
+                <button
+                  onClick={() => handleOpenForm()}
+                  className="w-full block text-center py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-extrabold text-xs transition-colors shadow-md cursor-pointer"
                 >
                   Apply Now · Onboard as Intern
-                </a>
+                </button>
               </div>
             </div>
 
@@ -621,14 +615,12 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
                 </li>
               </ul>
               <div className="mt-6">
-                <a
-                  href={INTERNSHIP_FORM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full block text-center py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs transition-colors shadow-md"
+                <button
+                  onClick={() => handleOpenForm()}
+                  className="w-full block text-center py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs transition-colors shadow-md cursor-pointer"
                 >
                   Apply Now · Receive Capstone Projects
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -754,15 +746,13 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
                   ₹{selectedTrack.processingFee}
                 </span>
               </div>
-              <a
-                href={INTERNSHIP_FORM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto justify-center px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs transition-colors flex items-center gap-1.5"
+              <button
+                onClick={() => handleOpenForm(selectedTrack.id)}
+                className="w-full sm:w-auto justify-center px-6 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer"
               >
                 <span>Apply Now · Onboard for {selectedTrack.title}</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
             </div>
           </div>
         </div>
@@ -774,17 +764,22 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
           DotRepo Corp. Internships · Technology Platform & Incubation Labs
         </p>
         <p className="mt-1">
-          Questions or verification queries? Reach out to our talent team via the official form at{' '}
-          <a
-            href={INTERNSHIP_FORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-emerald-400 underline"
+          Questions or verification queries? Reach out to our talent team or{' '}
+          <button
+            onClick={() => handleOpenForm()}
+            className="text-emerald-400 underline cursor-pointer hover:text-emerald-300 font-medium"
           >
-            Formester Official Registration
-          </a>
+            Apply Directly via Official Registration
+          </button>
         </p>
       </div>
+
+      {/* Official Native Registration & Razorpay Payment Modal */}
+      <InternshipRegistrationModal
+        isOpen={internalRegTrackId !== null}
+        initialTrackId={internalRegTrackId || undefined}
+        onClose={() => setInternalRegTrackId(null)}
+      />
     </div>
   );
 };

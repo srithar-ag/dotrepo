@@ -29,6 +29,7 @@ interface EnterpriseNavbarProps {
   onNavigate: (page: PageId, subId?: string) => void;
   onOpenSearch: () => void;
   onOpenContact: (topic?: string) => void;
+  onOpenRegistration?: (trackId?: string) => void;
 }
 
 export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
@@ -36,6 +37,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
   onNavigate,
   onOpenSearch,
   onOpenContact,
+  onOpenRegistration,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
@@ -219,15 +221,16 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
               </button>
 
               {/* Direct Form / Internship CTA Button (Desktop) */}
-              <a
-                href={INTERNSHIP_FORM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => {
+                  if (onOpenRegistration) onOpenRegistration();
+                  else onNavigate('internship');
+                }}
                 className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs transition-colors shadow-sm cursor-pointer"
               >
                 <span>Apply as Intern</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
 
               {/* Contact / Enterprise Schedule Button (Desktop) */}
               <button
@@ -410,15 +413,17 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                 13 technical and professional tracks with real production capstone projects and verified credentials. Apply now & onboard immediately!
               </p>
               <div className="mt-3.5 flex items-center gap-2">
-                <a
-                  href={INTERNSHIP_FORM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => {
+                    setActiveDropdown(null);
+                    if (onOpenRegistration) onOpenRegistration();
+                    else handleNavClick('internship');
+                  }}
                   className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 text-xs font-bold text-center transition-colors cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
                 >
                   <Send className="w-4 h-4" />
                   <span>Onboard as Intern Now</span>
-                </a>
+                </button>
                 <button
                   onClick={() => handleNavClick('internship')}
                   className="px-3.5 py-2.5 rounded-xl bg-neutral-900 border border-emerald-500/40 text-emerald-300 hover:text-white text-xs font-semibold flex items-center gap-1 transition-colors"
@@ -571,16 +576,18 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
 
             {/* Mobile Actions Bottom CTA */}
             <div className="pt-2 space-y-2">
-              <a
-                href={INTERNSHIP_FORM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs text-center flex items-center justify-center gap-2 transition-colors shadow-md"
+              <button
+                onClick={() => {
+                  setMobileMenuOpen(false);
+                  if (onOpenRegistration) onOpenRegistration();
+                  else handleNavClick('internship');
+                }}
+                className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs text-center flex items-center justify-center gap-2 transition-colors shadow-md cursor-pointer"
               >
                 <Send className="w-4 h-4" />
                 <span>Apply Now · Onboard as Intern</span>
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
 
               <div className="grid grid-cols-2 gap-2">
                 <button

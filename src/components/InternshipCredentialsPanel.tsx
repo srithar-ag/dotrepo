@@ -471,15 +471,15 @@ export const InternshipCredentialsPanel: React.FC<CredentialsPanelProps> = ({ on
                 >
                   Close
                 </button>
-                <a
-                  href={INTERNSHIP_FORM_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <button
+                  onClick={() => {
+                    setModalCertificate(null);
+                    if (onApplyClick) onApplyClick();
+                  }}
                   className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <span>Apply for Track</span>
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+                </button>
               </div>
             </div>
           </div>

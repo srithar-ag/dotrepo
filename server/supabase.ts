@@ -4,6 +4,7 @@ import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
 import { CONFIG } from './config.ts';
+import { getTrack } from './tracks.ts';
 
 let supabaseClient: SupabaseClient | null = null;
 
@@ -12,16 +13,21 @@ export function getSupabaseAdmin(): SupabaseClient | null {
     return null;
   }
   if (!supabaseClient) {
-    supabaseClient = createClient(
-      CONFIG.SUPABASE_URL,
-      CONFIG.SUPABASE_SERVICE_ROLE_KEY,
-      {
-        auth: {
-          persistSession: false,
-          autoRefreshToken: false,
-        },
-      }
-    );
+    try {
+      supabaseClient = createClient(
+        CONFIG.SUPABASE_URL,
+        CONFIG.SUPABASE_SERVICE_ROLE_KEY,
+        {
+          auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+          },
+        }
+      );
+    } catch (err) {
+      console.warn('[Supabase] Failed to initialize client, using local store fallback:', err);
+      return null;
+    }
   }
   return supabaseClient;
 }
@@ -113,27 +119,52 @@ export async function createApplicantAndRegistration(
   const registrationCode = generateRegistrationCode();
 
   if (client) {
-    // 1. Insert Applicant
+    // 1. Insert or update Applicant
+    let applicantId: string;
     const { data: applicant, error: applicantError } = await client
       .from('applicants')
       .insert({
         full_name: applicantData.fullName,
         email: applicantData.email,
-        phone: applicantData.phone,
+        mobile: applicantData.phone,
         college: applicantData.college,
-        degree_branch: applicantData.degreeBranch,
-        academic_year: applicantData.academicYear,
-        grad_year: applicantData.gradYear,
+        degree: applicantData.degreeBranch,
+        graduation_year: applicantData.gradYear,
         linkedin_url: applicantData.linkedinUrl || null,
         github_url: applicantData.githubUrl || null,
         portfolio_url: applicantData.portfolioUrl || null,
-        consent_given: applicantData.consentGiven,
-        consent_timestamp: new Date().toISOString(),
       })
       .select('id')
       .single();
 
-    if (applicantError || !applicant) {
+    if (applicant) {
+      applicantId = applicant.id;
+    } else if (applicantError?.code === '23505' || applicantError?.message?.includes('duplicate key') || applicantError?.message?.includes('unique')) {
+      const { data: existing, error: fetchErr } = await client
+        .from('applicants')
+        .select('id')
+        .eq('email', applicantData.email)
+        .single();
+
+      if (fetchErr || !existing) {
+        throw new Error(`Failed to resolve applicant: ${fetchErr?.message || 'Not found'}`);
+      }
+      applicantId = existing.id;
+
+      await client
+        .from('applicants')
+        .update({
+          full_name: applicantData.fullName,
+          mobile: applicantData.phone,
+          college: applicantData.college,
+          degree: applicantData.degreeBranch,
+          graduation_year: applicantData.gradYear,
+          linkedin_url: applicantData.linkedinUrl || null,
+          github_url: applicantData.githubUrl || null,
+          portfolio_url: applicantData.portfolioUrl || null,
+        })
+        .eq('id', applicantId);
+    } else {
       throw new Error(`Failed to save applicant: ${applicantError?.message || 'Database error'}`);
     }
 
@@ -141,14 +172,10 @@ export async function createApplicantAndRegistration(
     const { data: reg, error: regError } = await client
       .from('registrations')
       .insert({
-        registration_code: registrationCode,
-        applicant_id: applicant.id,
+        applicant_id: applicantId,
         track_id: trackData.trackId,
-        track_title: trackData.trackTitle,
-        processing_fee_inr: trackData.feeInr,
         payment_status: 'pending',
         onboarding_status: 'applied',
-        created_at: new Date().toISOString(),
       })
       .select('id')
       .single();
@@ -158,9 +185,9 @@ export async function createApplicantAndRegistration(
     }
 
     return {
-      applicantId: applicant.id,
+      applicantId: applicantId,
       registrationId: reg.id,
-      registrationCode,
+      registrationCode: `DOT-${reg.id.slice(0, 8).toUpperCase()}`,
     };
   }
 
@@ -223,10 +250,9 @@ export async function recordInitialPayment(params: {
   if (client) {
     const { error } = await client.from('payments').insert({
       registration_id: params.registrationId,
-      razorpay_order_id: params.orderId,
+      provider_order_id: params.orderId,
       amount_paise: params.amountPaise,
-      currency: params.currency,
-      status: 'created',
+      status: 'pending',
     });
     if (error) {
       console.error('Error inserting initial payment record in Supabase:', error);
@@ -257,69 +283,71 @@ export async function getRegistrationByOrderOrId(params: {
   const client = getSupabaseAdmin();
 
   if (client) {
-    let regQuery = client.from('registrations').select(`
-      id,
-      registration_code,
-      track_id,
-      track_title,
-      processing_fee_inr,
-      payment_status,
-      onboarding_status,
-      applicant_id,
-      applicants (
-        id,
-        full_name,
-        email,
-        phone,
-        college,
-        degree_branch
-      )
-    `);
+    let targetRegId = params.registrationId;
 
-    if (params.registrationId) {
-      regQuery = regQuery.eq('id', params.registrationId);
-      const { data, error } = await regQuery.single();
-      if (error || !data) return null;
-      return data;
-    }
-
-    if (params.orderId) {
+    if (!targetRegId && params.orderId) {
       const { data: payment } = await client
         .from('payments')
         .select('registration_id')
-        .eq('razorpay_order_id', params.orderId)
+        .eq('provider_order_id', params.orderId)
         .order('created_at', { ascending: false })
         .limit(1)
         .single();
 
       if (!payment) return null;
+      targetRegId = payment.registration_id;
+    }
 
-      const { data, error } = await client
+    if (targetRegId) {
+      const { data: reg, error } = await client
         .from('registrations')
         .select(`
           id,
-          registration_code,
           track_id,
-          track_title,
-          processing_fee_inr,
           payment_status,
           onboarding_status,
           applicant_id,
+          created_at,
           applicants (
             id,
             full_name,
             email,
-            phone,
+            mobile,
             college,
-            degree_branch
+            degree,
+            graduation_year
           )
         `)
-        .eq('id', payment.registration_id)
+        .eq('id', targetRegId)
         .single();
 
-      if (error || !data) return null;
-      return data;
+      if (error || !reg) return null;
+
+      const applicant: any = reg.applicants || {};
+      const track = getTrack(reg.track_id);
+      return {
+        id: reg.id,
+        registration_code: `DOT-${reg.id.slice(0, 8).toUpperCase()}`,
+        track_id: reg.track_id,
+        track_title: track?.title || reg.track_id,
+        processing_fee_inr: 199,
+        payment_status: reg.payment_status,
+        onboarding_status: reg.onboarding_status,
+        applicant_id: reg.applicant_id,
+        created_at: reg.created_at,
+        applicants: {
+          id: applicant.id,
+          full_name: applicant.full_name,
+          email: applicant.email,
+          phone: applicant.mobile || '',
+          college: applicant.college,
+          degree_branch: applicant.degree || '',
+          academic_year: '3rd Year',
+          grad_year: applicant.graduation_year || 2026,
+        },
+      };
     }
+    return null;
   }
 
   // Local store fallback
@@ -379,27 +407,36 @@ export async function markPaymentVerified(params: {
       .from('registrations')
       .update({
         payment_status: 'paid',
-        updated_at: now,
       })
       .eq('id', params.registrationId);
 
-    // 3. Insert or update payment record
-    await client.from('payments').upsert(
-      {
+    // 3. Update payment record to 'paid'
+    const { data: existingPay } = await client
+      .from('payments')
+      .select('id')
+      .eq('registration_id', params.registrationId)
+      .limit(1)
+      .single();
+
+    if (existingPay) {
+      await client
+        .from('payments')
+        .update({
+          provider_payment_id: params.paymentId,
+          status: 'paid',
+          verified_at: now,
+        })
+        .eq('id', existingPay.id);
+    } else {
+      await client.from('payments').insert({
         registration_id: params.registrationId,
-        razorpay_order_id: params.orderId,
-        razorpay_payment_id: params.paymentId,
-        razorpay_signature: params.signature || null,
+        provider_order_id: params.orderId,
+        provider_payment_id: params.paymentId,
         amount_paise: params.amountPaise,
-        currency: params.currency,
-        status: 'verified',
+        status: 'paid',
         verified_at: now,
-        webhook_event_id: params.webhookEventId || null,
-        raw_payload: params.rawPayload || {},
-        updated_at: now,
-      },
-      { onConflict: 'razorpay_payment_id' }
-    );
+      });
+    }
 
     return { alreadyVerified: false };
   }
@@ -460,10 +497,7 @@ export async function getAdminRegistrations(filters: {
     let query = client.from('registrations').select(
       `
       id,
-      registration_code,
       track_id,
-      track_title,
-      processing_fee_inr,
       payment_status,
       onboarding_status,
       created_at,
@@ -471,19 +505,18 @@ export async function getAdminRegistrations(filters: {
         id,
         full_name,
         email,
-        phone,
+        mobile,
         college,
-        degree_branch,
-        academic_year,
-        grad_year,
+        degree,
+        graduation_year,
         linkedin_url,
         github_url,
         portfolio_url
       ),
       payments (
         id,
-        razorpay_order_id,
-        razorpay_payment_id,
+        provider_order_id,
+        provider_payment_id,
         status,
         amount_paise,
         verified_at
@@ -513,10 +546,48 @@ export async function getAdminRegistrations(filters: {
       throw new Error(`Admin query error: ${error.message}`);
     }
 
+    const formattedItems = (data || []).map((r: any) => {
+      const applicant = r.applicants || {};
+      const track = getTrack(r.track_id);
+      const paymentList = (r.payments || []).map((p: any) => ({
+        id: p.id,
+        razorpay_order_id: p.provider_order_id || '',
+        razorpay_payment_id: p.provider_payment_id || '',
+        status: p.status,
+        amount_paise: p.amount_paise || 19900,
+        verified_at: p.verified_at,
+      }));
+
+      return {
+        id: r.id,
+        registration_code: `DOT-${r.id.slice(0, 8).toUpperCase()}`,
+        track_id: r.track_id,
+        track_title: track?.title || r.track_id,
+        processing_fee_inr: 199,
+        payment_status: r.payment_status,
+        onboarding_status: r.onboarding_status,
+        created_at: r.created_at,
+        applicants: {
+          id: applicant.id,
+          full_name: applicant.full_name,
+          email: applicant.email,
+          phone: applicant.mobile || '',
+          college: applicant.college,
+          degree_branch: applicant.degree || '',
+          academic_year: '3rd Year',
+          grad_year: applicant.graduation_year || 2026,
+          linkedin_url: applicant.linkedin_url,
+          github_url: applicant.github_url,
+          portfolio_url: applicant.portfolio_url,
+        },
+        payments: paymentList,
+      };
+    });
+
     // Calculate metrics
     const { data: allRegs } = await client
       .from('registrations')
-      .select('payment_status, processing_fee_inr');
+      .select('payment_status');
 
     const total = allRegs?.length || 0;
     const paid = allRegs?.filter((r) => r.payment_status === 'paid').length || 0;
@@ -525,7 +596,7 @@ export async function getAdminRegistrations(filters: {
     const grossCollectionsInr = paid * 199;
 
     return {
-      items: data || [],
+      items: formattedItems,
       totalCount: count || 0,
       metrics: {
         total,

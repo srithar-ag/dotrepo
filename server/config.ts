@@ -1,4 +1,15 @@
-// Server Configuration & Environment Variables
+function normalizeSupabaseUrl(raw: string | undefined): string {
+  if (!raw) return '';
+  const trimmed = raw.trim();
+  if (!trimmed) return '';
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    return trimmed;
+  }
+  if (trimmed.includes('.supabase.co')) {
+    return `https://${trimmed}`;
+  }
+  return `https://${trimmed}.supabase.co`;
+}
 
 export const CONFIG = {
   // Fixed registration fee authoritative amounts
@@ -7,9 +18,9 @@ export const CONFIG = {
   CURRENCY: 'INR',
 
   // Supabase
-  SUPABASE_URL: process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '',
-  SUPABASE_SERVICE_ROLE_KEY: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
-  SUPABASE_ANON_KEY: process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '',
+  SUPABASE_URL: normalizeSupabaseUrl(process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL),
+  SUPABASE_SERVICE_ROLE_KEY: (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim(),
+  SUPABASE_ANON_KEY: (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '').trim(),
 
   // Razorpay
   RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID || '',

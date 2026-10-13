@@ -91,7 +91,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               className="w-full sm:w-auto px-6 py-3.5 text-sm font-semibold text-emerald-800 hover:text-emerald-950 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg transition-colors cursor-pointer flex items-center justify-center gap-2 shadow-xs text-center"
             >
               <GraduationCap className="w-4 h-4 text-emerald-600" />
-              <span>Explore Internships (8 Tracks)</span>
+              <span>Explore Internships (13 Tracks)</span>
             </button>
             <button
               onClick={() => onNavigate('developers')}

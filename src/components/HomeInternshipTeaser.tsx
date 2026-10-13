@@ -26,6 +26,11 @@ export const HomeInternshipTeaser: React.FC<HomeInternshipTeaserProps> = ({ onNa
     { title: 'Machine Learning Intern', code: '/ML' },
     { title: 'SEO Intern', code: '/SEO' },
     { title: 'Cybersecurity Intern', code: '/SECURITY' },
+    { title: 'Grant Writing & Fundraising Intern', code: '/GRANTS' },
+    { title: 'Curation & Archival Intern', code: '/ARCHIVE' },
+    { title: 'SDE Intern', code: '/SDE' },
+    { title: 'Gen AI Intern', code: '/GENAI' },
+    { title: 'Applied AI Intern', code: '/APPLIED-AI' },
   ];
 
   return (
@@ -41,7 +46,7 @@ export const HomeInternshipTeaser: React.FC<HomeInternshipTeaserProps> = ({ onNa
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-950/90 border border-emerald-500/40 text-emerald-300 text-xs font-mono mb-4">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                 <span className="font-bold uppercase tracking-wider">DotRepo Corp. Internship Program</span>
-                <span className="hidden sm:inline text-neutral-400">· Bangalore, India & Remote</span>
+                <span className="hidden sm:inline text-neutral-400">· 100% Remote & Flexible</span>
               </div>
 
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight">
@@ -52,19 +57,19 @@ export const HomeInternshipTeaser: React.FC<HomeInternshipTeaserProps> = ({ onNa
               </h2>
 
               <p className="mt-3 text-neutral-300 text-sm leading-relaxed">
-                Move through the program at your own pace. Work on real production architectures, submit capstones with 1-on-1 industry code reviews, and earn an official credential with Letter of Recommendation (LOR) eligibility.
+                Move through the program at your own pace. Work on real production architectures, receive hands-on capstone projects, and earn an official credential with Letter of Recommendation (LOR) eligibility.
               </p>
 
-              {/* Price Tags */}
+              {/* Highlights */}
               <div className="mt-5 flex flex-wrap items-center gap-2 sm:gap-3 text-xs font-mono">
                 <div className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-neutral-900 border border-emerald-500/40 text-neutral-200">
-                  <span className="text-emerald-400 font-bold">For Internships:</span> ₹199
+                  <span className="text-emerald-400 font-bold">Capstone Projects:</span> Included
                 </div>
                 <div className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-neutral-900 border border-blue-500/40 text-neutral-200">
-                  <span className="text-blue-400 font-bold">For Projects:</span> ₹399 / project
+                  <span className="text-blue-400 font-bold">Duration:</span> Self-paced · 4 to 8 Weeks
                 </div>
                 <div className="px-2.5 sm:px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-700 text-neutral-300">
-                  <span>Self-paced · 4 to 8 Weeks</span>
+                  <span>Verifiable Certificate & LOR</span>
                 </div>
               </div>
 
@@ -84,17 +89,17 @@ export const HomeInternshipTeaser: React.FC<HomeInternshipTeaserProps> = ({ onNa
                   onClick={() => onNavigate('internship')}
                   className="w-full sm:w-auto justify-center px-5 py-3.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 font-semibold text-xs transition-colors flex items-center gap-2 cursor-pointer"
                 >
-                  <span>Explore All 8 Tracks</span>
+                  <span>Explore All 13 Tracks</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
 
-            {/* Right: 8 Tracks Interactive Matrix */}
+            {/* Right: 13 Tracks Interactive Matrix */}
             <div className="lg:w-[420px] shrink-0">
               <div className="text-xs font-mono font-bold text-neutral-400 uppercase tracking-wider mb-3 flex items-center justify-between">
                 <span>OPEN TRACKS (2026 COHORT)</span>
-                <span className="text-emerald-400 text-[11px]">8 Active</span>
+                <span className="text-emerald-400 text-[11px]">13 Active</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
                 {tracksList.map((t) => (

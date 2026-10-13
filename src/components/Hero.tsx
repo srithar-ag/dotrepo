@@ -163,7 +163,7 @@ export const Hero: React.FC<HeroProps> = ({ onNavigate, onOpenContactModal }) =>
                 onClick={() => onNavigate('internship')}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 text-sm font-semibold text-emerald-800 hover:text-emerald-950 bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 rounded-lg transition-all cursor-pointer shadow-xs"
               >
-                <span>Join as Intern (8 Tracks)</span>
+                <span>Join as Intern (13 Tracks)</span>
                 <ChevronRight className="w-4 h-4 text-emerald-600" />
               </button>
 

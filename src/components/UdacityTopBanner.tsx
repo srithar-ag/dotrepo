@@ -24,11 +24,11 @@ export const UdacityTopBanner: React.FC<UdacityTopBannerProps> = ({ onExploreInt
             <span className="hidden sm:inline">DotRepo Corp. Engineering Internships (2026 Batch):</span>
           </span>
           <span className="text-neutral-300 hidden md:inline">
-            8 Tracks Available
+            13 Tracks Available
           </span>
           <span className="hidden lg:inline text-neutral-500">•</span>
           <span className="hidden lg:inline text-neutral-400 font-mono text-[11px]">
-            Bangalore HQ & Remote
+            100% Remote & Self-Paced
           </span>
         </div>
 

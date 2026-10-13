@@ -27,7 +27,6 @@ export interface InternshipTrack {
   }[];
   duration: string;
   processingFee: number;
-  projectMentorshipFee: number;
   openings: number;
   badge: string;
 }

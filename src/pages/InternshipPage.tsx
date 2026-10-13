@@ -6,6 +6,7 @@ import {
   INTERNSHIP_FORM_URL,
 } from '../data/internshipData';
 import { InternshipTrack, PageId } from '../types';
+import { InternshipCredentialsPanel } from '../components/InternshipCredentialsPanel';
 import {
   ArrowRight,
   ExternalLink,
@@ -26,6 +27,9 @@ import {
   HelpCircle,
   X,
   Send,
+  FileCode,
+  ScrollText,
+  IdCard,
 } from 'lucide-react';
 
 interface InternshipPageProps {
@@ -39,12 +43,14 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
   const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
 
   const categories = [
-    { id: 'all', label: 'All 8 Tracks' },
+    { id: 'all', label: 'All 13 Tracks' },
     { id: 'Engineering', label: 'Engineering' },
     { id: 'Data & Analytics', label: 'Data & Analytics' },
     { id: 'AI & Machine Learning', label: 'AI & ML' },
     { id: 'Growth & Marketing', label: 'SEO & Growth' },
     { id: 'Security & Infrastructure', label: 'Cybersecurity' },
+    { id: 'Strategy & Grants', label: 'Grants & Fundraising' },
+    { id: 'Knowledge & Archival', label: 'Curation & Archival' },
   ];
 
   const filteredTracks =
@@ -54,7 +60,11 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
           (t) =>
             t.category.toLowerCase().includes(selectedCategory.toLowerCase()) ||
             (selectedCategory === 'AI & Machine Learning' &&
-              (t.category.includes('AI') || t.title.includes('AI') || t.title.includes('Machine Learning')))
+              (t.category.includes('AI') || t.title.includes('AI') || t.title.includes('Machine Learning'))) ||
+            (selectedCategory === 'Strategy & Grants' &&
+              (t.category.includes('Strategy') || t.title.includes('Grant') || t.title.includes('Fundraising'))) ||
+            (selectedCategory === 'Knowledge & Archival' &&
+              (t.category.includes('Archival') || t.title.includes('Curation') || t.title.includes('Archive')))
         );
 
   const handleOpenForm = (trackTitle?: string) => {
@@ -70,8 +80,8 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
           <div className="flex items-center gap-2">
             <span className="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             <span className="font-semibold text-white">2026 Batch Cohort:</span>
-            <span>Applications are open across all 8 technical tracks.</span>
-            <span className="hidden sm:inline text-neutral-400">· HQ: Bangalore, India</span>
+            <span>Applications are open across all 13 technical & professional tracks.</span>
+            <span className="hidden sm:inline text-neutral-400">· 100% Remote & Self-Paced</span>
           </div>
           <a
             href={INTERNSHIP_FORM_URL}
@@ -109,7 +119,7 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
             <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
             <span className="font-bold tracking-wider uppercase text-[11px] sm:text-xs">DotRepo Corp. Internship Portal</span>
             <span className="text-emerald-600 hidden sm:inline">|</span>
-            <span className="text-neutral-300 text-[11px] sm:text-xs">Bangalore, India & Remote</span>
+            <span className="text-neutral-300 text-[11px] sm:text-xs">100% Remote & Self-Paced</span>
           </div>
 
           <h1 className="text-3xl sm:text-6xl md:text-7xl font-black tracking-tight text-white max-w-4xl mx-auto leading-[1.1] text-balance">
@@ -142,8 +152,25 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
               }}
               className="w-full sm:w-auto justify-center px-6 py-3.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-700 font-semibold text-sm transition-colors cursor-pointer flex items-center gap-2"
             >
-              <span>Explore 8 Tracks</span>
+              <span>Explore 13 Tracks</span>
               <ChevronDown className="w-4 h-4 text-neutral-400" />
+            </button>
+          </div>
+
+          {/* Helper span requested by user: "span - scroll down to explore tracks and benifits" */}
+          <div className="mt-5 flex items-center justify-center">
+            <button
+              onClick={() => {
+                const el = document.getElementById('benefits-section') || document.getElementById('tracks-section');
+                el?.scrollIntoView({ behavior: 'smooth' });
+              }}
+              className="group inline-flex items-center gap-2 text-xs font-mono text-emerald-400/90 hover:text-emerald-300 transition-colors cursor-pointer"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="tracking-wide underline decoration-dotted underline-offset-4 font-semibold">
+                Scroll down to explore tracks and benefits
+              </span>
+              <ChevronDown className="w-3.5 h-3.5 text-emerald-400 group-hover:translate-y-0.5 transition-transform" />
             </button>
           </div>
 
@@ -163,7 +190,7 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
             </div>
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>Bangalore Tech Ecosystem</span>
+              <span>Industry-Standard Capstones</span>
             </div>
           </div>
         </div>
@@ -215,19 +242,183 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
         </div>
       </section>
 
-      {/* 8 Tracks Directory Section (Inspired by Screenshot 1 & 2) */}
+      {/* WHAT YOU'LL RECEIVE AT THE END OF YOUR INTERNSHIP Section */}
+      <section id="benefits-section" className="py-20 md:py-28 bg-[#fafafc] border-b border-neutral-200 text-neutral-900 relative overflow-hidden">
+        {/* Subtle background ambient accents */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none">
+          <div className="absolute top-0 right-1/4 w-96 h-96 bg-orange-500/5 rounded-full blur-3xl" />
+          <div className="absolute bottom-0 left-1/4 w-96 h-96 bg-amber-500/5 rounded-full blur-3xl" />
+        </div>
+
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-orange-50 border border-orange-200/80 text-orange-700 text-xs font-mono font-bold tracking-wider uppercase mb-4">
+              <span className="w-1.5 h-1.5 rounded-full bg-orange-500 animate-pulse" />
+              <span>INTERNSHIP BENEFITS</span>
+            </div>
+            <h2 className="text-2xl sm:text-4xl lg:text-5xl font-black text-neutral-950 tracking-tight leading-tight uppercase font-sans">
+              WHAT YOU’LL RECEIVE AT THE END OF YOUR INTERNSHIP
+            </h2>
+            <p className="mt-4 text-base sm:text-lg text-neutral-600 leading-relaxed font-medium">
+              Your work deserves recognition. Complete your internship and receive the credentials and documentation that reflect your journey.
+            </p>
+          </div>
+
+          {/* 2x2 Grid on Desktop, 1-col on Mobile */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+            {/* Benefit 1: Internship Completion Certificate */}
+            <div className="group relative p-8 sm:p-9 rounded-2xl bg-white border border-neutral-200/80 hover:border-orange-300 transition-all duration-300 shadow-xs hover:shadow-xl hover:shadow-orange-500/5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-600 flex items-center justify-center group-hover:bg-orange-100/80 group-hover:scale-105 transition-all duration-300">
+                    <Award className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-neutral-400 bg-neutral-100/80 px-2.5 py-1 rounded">
+                    01 · Official Credential
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-3 group-hover:text-orange-950 transition-colors">
+                  Internship Completion Certificate
+                </h3>
+                <p className="text-sm text-neutral-600 leading-relaxed">
+                  A formal certificate recognizing successful completion of the internship program at DOTREPO.
+                </p>
+              </div>
+
+              <div className="mt-8 pt-5 border-t border-neutral-100 flex items-center gap-2 text-xs font-mono text-neutral-500">
+                <CheckCircle2 className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                <span>Verifiable digital credential with unique certificate ID</span>
+              </div>
+            </div>
+
+            {/* Benefit 2: Capstone Project Certificate */}
+            <div className="group relative p-8 sm:p-9 rounded-2xl bg-white border border-neutral-200/80 hover:border-orange-300 transition-all duration-300 shadow-xs hover:shadow-xl hover:shadow-orange-500/5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-600 flex items-center justify-center group-hover:bg-orange-100/80 group-hover:scale-105 transition-all duration-300">
+                    <FileCode className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-neutral-400 bg-neutral-100/80 px-2.5 py-1 rounded">
+                    02 · Proof of Work
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-3 group-hover:text-orange-950 transition-colors">
+                  Capstone Project Certificate
+                </h3>
+                <p className="text-sm text-neutral-600 leading-relaxed">
+                  Recognition for completing and presenting a capstone project that demonstrates practical technical skills and real-world problem-solving.
+                </p>
+              </div>
+
+              <div className="mt-8 pt-5 border-t border-neutral-100 flex items-center gap-2 text-xs font-mono text-neutral-500">
+                <CheckCircle2 className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                <span>Validates technical track specifications & code deliverables</span>
+              </div>
+            </div>
+
+            {/* Benefit 3: Letter of Recommendation */}
+            <div className="group relative p-8 sm:p-9 rounded-2xl bg-white border border-neutral-200/80 hover:border-orange-300 transition-all duration-300 shadow-xs hover:shadow-xl hover:shadow-orange-500/5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-600 flex items-center justify-center group-hover:bg-orange-100/80 group-hover:scale-105 transition-all duration-300">
+                    <ScrollText className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-amber-700 bg-amber-50 border border-amber-200/60 px-2.5 py-1 rounded">
+                    03 · Merit-Based
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-3 group-hover:text-orange-950 transition-colors">
+                  Letter of Recommendation
+                </h3>
+                <p className="text-sm text-neutral-600 leading-relaxed">
+                  A professional recommendation letter for eligible interns based on their performance, contributions, technical ability, and professionalism.
+                </p>
+              </div>
+
+              <div className="mt-8 pt-5 border-t border-neutral-100 flex items-center gap-2 text-xs font-mono text-neutral-500">
+                <CheckCircle2 className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                <span>Awarded on merit upon performance review (not automatic for all)</span>
+              </div>
+            </div>
+
+            {/* Benefit 4: Joining Letter + Intern ID */}
+            <div className="group relative p-8 sm:p-9 rounded-2xl bg-white border border-neutral-200/80 hover:border-orange-300 transition-all duration-300 shadow-xs hover:shadow-xl hover:shadow-orange-500/5 flex flex-col justify-between">
+              <div>
+                <div className="flex items-center justify-between mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-orange-50 border border-orange-200/80 text-orange-600 flex items-center justify-center group-hover:bg-orange-100/80 group-hover:scale-105 transition-all duration-300">
+                    <IdCard className="w-6 h-6" />
+                  </div>
+                  <span className="text-[11px] font-mono font-bold tracking-wider uppercase text-neutral-400 bg-neutral-100/80 px-2.5 py-1 rounded">
+                    04 · Onboarding Pass
+                  </span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-neutral-900 mb-3 group-hover:text-orange-950 transition-colors">
+                  Joining Letter + Intern ID
+                </h3>
+                <p className="text-sm text-neutral-600 leading-relaxed">
+                  Official internship joining documentation and a unique intern identification number issued during onboarding.
+                </p>
+              </div>
+
+              <div className="mt-8 pt-5 border-t border-neutral-100 flex items-center gap-2 text-xs font-mono text-neutral-500">
+                <CheckCircle2 className="w-3.5 h-3.5 text-orange-600 shrink-0" />
+                <span>Formal corporate confirmation letter + verified candidate ID</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Interactive Verified Credentials & Documents Specimen Panel */}
+          <InternshipCredentialsPanel />
+
+          {/* Tasteful Closing Line & Navigation CTA */}
+          <div className="mt-14 pt-10 border-t border-neutral-200 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+            <div>
+              <p className="text-base sm:text-lg font-bold text-neutral-950 tracking-tight">
+                Build your skills. Prove your work. Earn your recognition.
+              </p>
+              <p className="text-xs text-neutral-500 mt-1">
+                Official credentials issued by DOTREPO Corp. · Virtual & Remote Cohorts
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  const el = document.getElementById('tracks-section');
+                  el?.scrollIntoView({ behavior: 'smooth' });
+                }}
+                className="px-5 py-2.5 rounded-xl bg-neutral-900 hover:bg-neutral-800 text-white text-xs font-semibold transition-colors cursor-pointer flex items-center gap-1.5 shadow-xs"
+              >
+                <span>Explore Tracks</span>
+                <ChevronDown className="w-3.5 h-3.5 text-neutral-400" />
+              </button>
+              <a
+                href={INTERNSHIP_FORM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-5 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5 shadow-sm shadow-orange-600/20"
+              >
+                <span>Apply Now</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 10 Tracks Directory Section */}
       <section id="tracks-section" className="py-20 md:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
             <div>
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-400/30 text-blue-300 text-xs font-mono mb-2">
-                <span>OFFERING INTERNSHIPS ACROSS 8 TRACKS</span>
+                <span>OFFERING INTERNSHIPS ACROSS 13 TRACKS</span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl font-black text-white tracking-tight">
                 Choose Your Internship Track
               </h2>
               <p className="text-neutral-300 text-sm sm:text-base mt-2 max-w-xl">
-                Each track includes hands-on industry assignments, milestone benchmarks, and capstone projects with optional 1-on-1 mentorship.
+                Each track includes hands-on industry assignments, milestone benchmarks, and comprehensive capstone projects.
               </p>
             </div>
 
@@ -298,7 +489,7 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
                   <div className="mt-5 p-3 rounded-xl bg-neutral-900/90 border border-neutral-800 text-xs">
                     <div className="flex items-center justify-between text-[11px] font-mono text-emerald-400 mb-1">
                       <span className="font-semibold">TOP FIT CAPSTONE:</span>
-                      <span className="text-neutral-400">Mentorship: ₹399</span>
+                      <span className="text-neutral-400">Capstone Included</span>
                     </div>
                     <p className="text-neutral-200 font-medium text-xs truncate">
                       {track.topFitProjects[0].title}
@@ -306,15 +497,11 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
                   </div>
                 </div>
 
-                {/* Card Actions & Pricing */}
+                {/* Card Actions */}
                 <div className="mt-6 pt-4 border-t border-neutral-800/80 flex items-center justify-between">
-                  <div>
-                    <span className="text-[10px] font-mono text-neutral-400 block">
-                      Internship Fee
-                    </span>
-                    <span className="text-sm font-bold font-mono text-white">
-                      ₹{track.processingFee}
-                    </span>
+                  <div className="flex items-center gap-1.5 text-xs text-neutral-400 font-mono">
+                    <Clock className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>{track.duration}</span>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -352,7 +539,7 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
               Affordable, Student-Centric Model
             </h2>
             <p className="text-neutral-400 text-xs sm:text-sm mt-2 max-w-xl mx-auto">
-              No hidden subscriptions. All processing fees and optional mentorship costs are completely upfront.
+              Transparent, student-centric model. Full access to learning milestones, production capstone projects, and verified credentials.
             </p>
           </div>
 
@@ -401,36 +588,36 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
               </div>
             </div>
 
-            {/* ₹399 Project Mentorship Card */}
+            {/* Capstone Projects Included Card */}
             <div className="p-6 rounded-2xl bg-neutral-900 border border-blue-500/50 relative shadow-xl">
               <div className="inline-block px-2.5 py-0.5 rounded text-[11px] font-mono bg-blue-950 text-blue-300 border border-blue-500/40 mb-3 font-bold">
-                399 FOR INTERNSHIPS FOR PROJECTS
+                CAPSTONE PROJECTS INCLUDED
               </div>
               <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl sm:text-4xl font-extrabold text-white font-mono">
-                  ₹399
+                <span className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
+                  Industry Capstones
                 </span>
-                <span className="text-neutral-400 text-xs font-mono">/ project mentorship</span>
+                <span className="text-emerald-400 text-xs font-mono font-bold">Included</span>
               </div>
               <h3 className="text-lg font-bold text-white mb-2">
-                1-on-1 Senior Industry PR Review & Capstones
+                Production-Grade Projects & Portfolio Deliverables
               </h3>
               <ul className="space-y-2 text-xs text-neutral-300 mt-4">
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                  <span>Line-by-line GitHub pull request code audit</span>
+                  <span>Real enterprise problem statements & architecture blueprints</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                  <span>Architectural design & best practice feedback</span>
+                  <span>Automated CI/CD checks & performance benchmarks</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                  <span>Production-grade portfolio guidance from Bangalore leads</span>
+                  <span>Production-grade GitHub repo & showcase artifacts</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                  <span>Direct mentor Q&A on real-world edge cases</span>
+                  <span>Verifiable credentials & Letter of Recommendation (LOR)</span>
                 </li>
               </ul>
               <div className="mt-6">
@@ -440,7 +627,7 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
                   rel="noopener noreferrer"
                   className="w-full block text-center py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs transition-colors shadow-md"
                 >
-                  Apply Now · Project Mentorship
+                  Apply Now · Receive Capstone Projects
                 </a>
               </div>
             </div>
@@ -532,7 +719,7 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
 
             <div className="mt-6">
               <h4 className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-wider mb-3">
-                Top Fit Capstone Projects (Mentorship: ₹399/project)
+                Top Fit Capstone Projects (Capstone Included)
               </h4>
               <div className="space-y-3">
                 {selectedTrack.topFitProjects.map((p, idx) => (
@@ -584,10 +771,10 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate }) =>
       {/* Footer Banner */}
       <div className="py-12 bg-neutral-950 border-t border-neutral-800 text-center text-xs text-neutral-400">
         <p>
-          DotRepo Corp. Engineering Internships · Technology Platform & Incubation Labs · Bangalore, India
+          DotRepo Corp. Internships · Technology Platform & Incubation Labs
         </p>
         <p className="mt-1">
-          Questions or verification queries? Reach out to our Bangalore talent team via the official form at{' '}
+          Questions or verification queries? Reach out to our talent team via the official form at{' '}
           <a
             href={INTERNSHIP_FORM_URL}
             target="_blank"

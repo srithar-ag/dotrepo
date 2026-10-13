@@ -200,7 +200,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                   <GraduationCap className="w-4 h-4 text-emerald-400" />
                   <span>Internship</span>
                   <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-bold">
-                    8 Tracks
+                    13 Tracks
                   </span>
                 </button>
               </nav>
@@ -330,7 +330,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                   ? 'bg-neutral-950/20 text-neutral-950 font-black'
                   : 'bg-emerald-500/25 text-emerald-300 font-bold'
               }`}>
-                8 Tracks
+                13 Tracks
               </span>
             </button>
 
@@ -403,11 +403,11 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                 <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-emerald-300 bg-emerald-900/80 px-2 py-0.5 rounded border border-emerald-500/30">
                   2026 Batch Active
                 </span>
-                <span className="text-[10px] font-mono text-neutral-400">Bangalore HQ & Remote</span>
+                <span className="text-[10px] font-mono text-neutral-400">100% Remote Cohorts</span>
               </div>
-              <h3 className="text-base font-bold text-white">DotRepo Corp. Engineering Internships</h3>
+              <h3 className="text-base font-bold text-white">DotRepo Corp. Internships</h3>
               <p className="text-xs text-neutral-300 mt-1 leading-relaxed">
-                8 technical tracks: <strong className="text-emerald-400 font-semibold">₹199 for Internships</strong> (Onboarding & Credentials) and <strong className="text-blue-400 font-semibold">₹399 for Projects</strong> (1-on-1 Code Reviews). Apply now & onboard immediately!
+                13 technical and professional tracks with real production capstone projects and verified credentials. Apply now & onboard immediately!
               </p>
               <div className="mt-3.5 flex items-center gap-2">
                 <a

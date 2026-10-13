@@ -143,7 +143,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 >
                   <span>Internships</span>
                   <span className="text-[10px] text-emerald-800 bg-emerald-100 px-1.5 py-0.5 rounded font-mono font-bold">
-                    8 Tracks
+                    13 Tracks
                   </span>
                 </button>
               </li>

@@ -10,7 +10,7 @@ export const INTERNSHIP_STEPS = [
     description:
       'Apply with LinkedIn, choose your track, and tell us what you want to build.',
     detail:
-      'Fill out the verified registration form. Share your portfolio or LinkedIn profile and pick one of the 8 specialized technical tracks.',
+      'Fill out the verified registration form. Share your portfolio or LinkedIn profile and pick one of the 13 specialized technical and professional tracks.',
     icon: 'FileCheck',
   },
   {
@@ -20,7 +20,7 @@ export const INTERNSHIP_STEPS = [
     description:
       'Get approved, enter the portal, and begin with a clear plan for your chosen field.',
     detail:
-      'Receive your candidate welcome packet, batch workspace credentials, weekly milestones roadmap, and direct access to Bangalore engineering leads.',
+      'Receive your candidate welcome packet, batch workspace credentials, weekly milestones roadmap, and direct access to dedicated engineering leads.',
     icon: 'Sparkles',
   },
   {
@@ -30,7 +30,7 @@ export const INTERNSHIP_STEPS = [
     description:
       'Complete practical track work and turn what you learn into a portfolio-ready capstone.',
     detail:
-      'Develop production-grade projects. Opt for 1-on-1 mentor code reviews (₹399/project) with automated CI/CD checks, PR feedback, and performance benchmarks.',
+      'Develop production-grade capstone projects with automated CI/CD checks, rigorous architectural benchmarks, and real-world deliverables.',
     icon: 'Code2',
   },
   {
@@ -71,7 +71,6 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
     ],
     duration: '6-8 Weeks (Self-paced)',
     processingFee: 199,
-    projectMentorshipFee: 399,
     openings: 18,
     badge: 'Popular',
   },
@@ -100,7 +99,6 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
     ],
     duration: '6-8 Weeks (Self-paced)',
     processingFee: 199,
-    projectMentorshipFee: 399,
     openings: 14,
     badge: 'High Demand',
   },
@@ -129,7 +127,6 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
     ],
     duration: '6-8 Weeks (Self-paced)',
     processingFee: 199,
-    projectMentorshipFee: 399,
     openings: 15,
     badge: 'Core Track',
   },
@@ -158,7 +155,6 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
     ],
     duration: '4-6 Weeks (Self-paced)',
     processingFee: 199,
-    projectMentorshipFee: 399,
     openings: 20,
     badge: 'Trending',
   },
@@ -187,7 +183,6 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
     ],
     duration: '4-6 Weeks (Self-paced)',
     processingFee: 199,
-    projectMentorshipFee: 399,
     openings: 12,
     badge: 'Specialized',
   },
@@ -216,7 +211,6 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
     ],
     duration: '6-8 Weeks (Self-paced)',
     processingFee: 199,
-    projectMentorshipFee: 399,
     openings: 16,
     badge: 'Advanced',
   },
@@ -245,7 +239,6 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
     ],
     duration: '4-6 Weeks (Self-paced)',
     processingFee: 199,
-    projectMentorshipFee: 399,
     openings: 10,
     badge: 'Growth',
   },
@@ -274,9 +267,148 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
     ],
     duration: '6-8 Weeks (Self-paced)',
     processingFee: 199,
-    projectMentorshipFee: 399,
     openings: 12,
     badge: 'Critical Defense',
+  },
+  {
+    id: 'grant-writing-fundraising-intern',
+    slug: '/GRANTS',
+    title: 'Grant Writing & Fundraising Intern',
+    category: 'Strategy & Grants',
+    tagline: 'Prospect research, compelling narrative development, grant application pipelines & investor decks.',
+    description:
+      'Conduct institutional funding research, craft data-backed grant proposals, structure donor outreach pipelines, and build impact measurement reports for technical, research, and non-profit initiatives.',
+    skills: ['Grant Proposal Writing', 'Prospect Research', 'Budget Modeling', 'Impact Assessment', 'Stewardship Cadences', 'Case Statements'],
+    topFitProjects: [
+      {
+        title: 'Institutional Research & Innovation Grant Proposal',
+        description: 'Comprehensive funding proposal including project rationale, budget breakdown, measurable milestone targets, and risk mitigation matrices.',
+        tech: ['Grant Frameworks', 'Budgeting Models', 'Impact KPIs', 'Compliance Documentation'],
+        deliverable: '15-page ready-to-submit institutional grant proposal package + executive summary deck',
+      },
+      {
+        title: 'Strategic Donor Pipeline & Capital Campaign Architecture',
+        description: 'Systematic donor prospecting directory tracking funding cycles, philanthropic criteria, alignment scorecards, and stewardship communications.',
+        tech: ['Pipeline Tracking', 'Prospect Scoring', 'Stewardship Blueprints', 'Financial Modeling'],
+        deliverable: 'Automated grant tracking tracker with 50+ prospect profiles and customized letter of inquiry (LOI) templates',
+      },
+    ],
+    duration: '4-6 Weeks (Self-paced)',
+    processingFee: 199,
+    openings: 10,
+    badge: 'New Track',
+  },
+  {
+    id: 'curation-archival-intern',
+    slug: '/ARCHIVE',
+    title: 'Curation & Archival Intern',
+    category: 'Knowledge & Archival',
+    tagline: 'Digital preservation, metadata taxonomy, collection cataloging & archival retrieval architectures.',
+    description:
+      'Design structured metadata schemas, curate digital repository collections, implement archival preservation standards (Dublin Core, OAIS), and build digital exhibitions with search indexing.',
+    skills: ['Digital Preservation', 'Dublin Core / Metadata', 'Taxonomy & Ontologies', 'Archival Finding Aids', 'Collection Cataloging', 'Search Indexing'],
+    topFitProjects: [
+      {
+        title: 'Enterprise Digital Repository & Dublin Core Taxonomy System',
+        description: 'Structured archival cataloging architecture for digital artifacts with Dublin Core metadata tagging, provenance audit logs, and versioned asset preservation.',
+        tech: ['Dublin Core', 'JSON-LD Metadata', 'Open Archives (OAIS)', 'Taxonomy Standards'],
+        deliverable: 'Complete digital repository schema, 100-item curated collection catalog, and preservation guide',
+      },
+      {
+        title: 'Interactive Digital Exhibition & Archival Retrieval Portal',
+        description: 'Searchable digital archive showcase with faceted filtering, interactive narrative curation, document transcription, and provenance tracking.',
+        tech: ['Digital Curation', 'Search Indexing', 'Faceted Search', 'Provenance Audits'],
+        deliverable: 'Interactive digital archive showcase portal with curated themes, source citations, and archival finding aid',
+      },
+    ],
+    duration: '4-6 Weeks (Self-paced)',
+    processingFee: 199,
+    openings: 10,
+    badge: 'New Track',
+  },
+  {
+    id: 'sde-intern',
+    slug: '/SDE',
+    title: 'SDE Intern',
+    category: 'Engineering',
+    tagline: 'Full-stack software engineering, scalable architectures, algorithms & distributed systems.',
+    description:
+      'Develop full-stack web and cloud systems, implement efficient data structures and algorithms, engineer robust REST/GraphQL APIs, and write production unit & integration test suites.',
+    skills: ['Data Structures & Algorithms', 'TypeScript / Python / Java', 'System Design Basics', 'REST & GraphQL APIs', 'SQL / NoSQL Databases', 'CI/CD Pipelines'],
+    topFitProjects: [
+      {
+        title: 'Distributed Task Scheduling & Job Queue System',
+        description: 'High-reliability background job processor with worker concurrency, task retry exponential backoff, and distributed locking with Redis.',
+        tech: ['TypeScript / Go', 'Redis', 'PostgreSQL', 'Docker', 'Jest'],
+        deliverable: 'Containerized distributed task worker service with comprehensive test coverage and performance benchmarks',
+      },
+      {
+        title: 'Full-Stack Collaborative Workspace with Real-Time Sync',
+        description: 'Multi-user document collaboration engine with operational transformation / CRDT sync, WebSocket event streaming, and optimistic UI updates.',
+        tech: ['React', 'Node.js', 'WebSockets', 'Tailwind', 'Redis Pub/Sub'],
+        deliverable: 'Production-ready full-stack web app with load testing reports and CI/CD workflow',
+      },
+    ],
+    duration: '6-8 Weeks (Self-paced)',
+    processingFee: 199,
+    openings: 20,
+    badge: 'Popular',
+  },
+  {
+    id: 'gen-ai-intern',
+    slug: '/GENAI',
+    title: 'Gen AI Intern',
+    category: 'AI & Machine Learning',
+    tagline: 'Foundation models, multimodal generation, RAG architectures & autonomous agents.',
+    description:
+      'Build cutting-edge generative AI applications, implement Retrieval-Augmented Generation (RAG) with vector databases, orchestrate multi-agent workflows, and evaluate model performance.',
+    skills: ['Gemini / Claude / OpenAI APIs', 'LangChain / LlamaIndex', 'Vector DBs (Pinecone/Qdrant)', 'RAG Architectures', 'Multimodal GenAI', 'Agent Tool-Calling'],
+    topFitProjects: [
+      {
+        title: 'Multi-Modal Autonomous Research & Synthesis Copilot',
+        description: 'End-to-end agentic workflow processing PDFs, images, and audio, generating structured technical briefs with citations and grounding checks.',
+        tech: ['Gemini Multimodal API', 'Python', 'Qdrant', 'FastAPI', 'Streamlit'],
+        deliverable: 'Live deployed multimodal research agent with benchmark evaluation dataset and hallucination guardrails',
+      },
+      {
+        title: 'Enterprise Hybrid RAG System with Semantic Caching',
+        description: 'Production RAG pipeline featuring hybrid dense/sparse search, reranking with Cross-Encoders, and Redis semantic caching for 80% latency reduction.',
+        tech: ['Python', 'LangChain', 'Redis Semantic Cache', 'FastAPI', 'Docker'],
+        deliverable: 'Dockerized production RAG API with automated evaluation suite (Ragas) and latency analysis',
+      },
+    ],
+    duration: '6-8 Weeks (Self-paced)',
+    processingFee: 199,
+    openings: 18,
+    badge: 'High Demand',
+  },
+  {
+    id: 'applied-ai-intern',
+    slug: '/APPLIED-AI',
+    title: 'Applied AI Intern',
+    category: 'AI & Machine Learning',
+    tagline: 'Production AI pipelines, ML inference optimization, edge deployment & domain-specific AI solutions.',
+    description:
+      'Bridge research and production by deploying AI models to real-world products. Learn model serving, quantized inference (ONNX, TensorRT), latency optimization, and continuous evaluation.',
+    skills: ['Model Serving & Inference', 'ONNX / TensorRT Quantization', 'FastAPI / Triton Server', 'Computer Vision / NLP', 'MLOps & Monitoring', 'Evaluation Benchmarks'],
+    topFitProjects: [
+      {
+        title: 'Low-Latency Edge AI Inference Gateway',
+        description: 'Quantized transformer and vision inference service optimized with ONNX Runtime, achieving sub-20ms P99 latency on CPU/GPU endpoints.',
+        tech: ['Python', 'ONNX Runtime', 'FastAPI', 'Docker', 'Prometheus'],
+        deliverable: 'Production inference server with stress-test benchmarks, Grafana telemetry, and load testing scripts',
+      },
+      {
+        title: 'Automated Document Understanding & Extraction Engine',
+        description: 'Domain-tailored computer vision and NLP pipeline for automated parsing of unstructured invoices, clinical notes, and legal filings.',
+        tech: ['LayoutLM / Vision Transformers', 'Python', 'PyTorch', 'FastAPI'],
+        deliverable: 'Ready-to-deploy document understanding API with 97%+ accuracy and automated schema validation',
+      },
+    ],
+    duration: '6-8 Weeks (Self-paced)',
+    processingFee: 199,
+    openings: 15,
+    badge: 'Core Track',
   },
 ];
 
@@ -286,12 +418,12 @@ export const INTERNSHIP_FAQS = [
     a: 'The ₹199 enrollment fee is a nominal, one-time fee that covers student verification, automated credentials setup, access to our candidate portal, and administrative batch onboarding. It guarantees serious applicants and dedicated engineering resource allocation.',
   },
   {
-    q: 'How does the ₹399 Project Mentorship fee work?',
-    a: 'For each practical capstone project you build, you can opt for 1-on-1 industry mentorship for ₹399 per project. An experienced DotRepo Corp. engineer conducts line-by-line GitHub pull request code reviews, provides architectural feedback, and gives constructive suggestions to make your work production-grade.',
+    q: 'What capstone projects do interns work on?',
+    a: 'Interns receive and build production-grade capstone projects tailored to their chosen technical track. Each capstone includes clear architecture specifications, automated CI/CD checks, and portfolio deliverables to showcase real-world proof of competence.',
   },
   {
-    q: 'Is this an online / remote internship, and where is DotRepo Corp. located?',
-    a: 'The internship is 100% remote and self-paced, allowing students and working professionals from anywhere in India and globally to participate. DotRepo Corp. is headquartered in Bangalore (Bengaluru), Karnataka, India, with global cloud engineering clusters.',
+    q: 'Is this an online / remote internship?',
+    a: 'The internship is 100% remote and self-paced, allowing students and working professionals from anywhere globally to participate with flexible hours and milestone deadlines.',
   },
   {
     q: 'Do I get a verified certificate and Letter of Recommendation (LOR)?',

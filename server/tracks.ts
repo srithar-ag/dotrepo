@@ -21,40 +21,52 @@ export const SERVER_TRACKS: Record<string, ServerTrack> = {
     category: 'Data & Analytics',
     processingFee: 199,
   },
-  'backend-intern': {
-    id: 'backend-intern',
-    title: 'Backend Intern',
-    category: 'Engineering',
+  'backend-optimised-intern': {
+    id: 'backend-optimised-intern',
+    title: 'Backend (Optimised) Intern',
+    category: 'Systems & Cloud',
     processingFee: 199,
   },
-  'full-stack-intern': {
-    id: 'full-stack-intern',
-    title: 'Full Stack Intern',
-    category: 'Engineering',
+  'ai-fluency-intern': {
+    id: 'ai-fluency-intern',
+    title: 'AI Fluency Intern',
+    category: 'AI & Operations',
     processingFee: 199,
   },
-  'ui-ux-intern': {
-    id: 'ui-ux-intern',
-    title: 'UI/UX Design Intern',
-    category: 'Design & Experience',
-    processingFee: 199,
-  },
-  'product-management-intern': {
-    id: 'product-management-intern',
-    title: 'Product Management Intern',
-    category: 'Product & Growth',
-    processingFee: 199,
-  },
-  'devops-cloud-intern': {
-    id: 'devops-cloud-intern',
-    title: 'DevOps & Cloud Intern',
-    category: 'Cloud & Infrastructure',
+  'prompt-engineering-intern': {
+    id: 'prompt-engineering-intern',
+    title: 'Prompt Engineering Intern',
+    category: 'AI Engineering',
     processingFee: 199,
   },
   'machine-learning-intern': {
     id: 'machine-learning-intern',
     title: 'Machine Learning Intern',
     category: 'AI & Data Science',
+    processingFee: 199,
+  },
+  'seo-intern': {
+    id: 'seo-intern',
+    title: 'SEO Intern',
+    category: 'Growth & Marketing',
+    processingFee: 199,
+  },
+  'cybersecurity-intern': {
+    id: 'cybersecurity-intern',
+    title: 'Cybersecurity Intern',
+    category: 'Security & Infrastructure',
+    processingFee: 199,
+  },
+  'grant-writing-fundraising-intern': {
+    id: 'grant-writing-fundraising-intern',
+    title: 'Grant Writing & Fundraising Intern',
+    category: 'Strategy & Grants',
+    processingFee: 199,
+  },
+  'curation-archival-intern': {
+    id: 'curation-archival-intern',
+    title: 'Curation & Archival Intern',
+    category: 'Knowledge & Archival',
     processingFee: 199,
   },
   'sde-intern': {
@@ -75,20 +87,23 @@ export const SERVER_TRACKS: Record<string, ServerTrack> = {
     category: 'AI & Machine Learning',
     processingFee: 199,
   },
-  'grant-writing-intern': {
-    id: 'grant-writing-intern',
-    title: 'Grant Writing & Fundraising Intern',
-    category: 'Strategy & Grants',
-    processingFee: 199,
-  },
-  'curation-archival-intern': {
-    id: 'curation-archival-intern',
-    title: 'Curation & Archival Intern',
-    category: 'Knowledge & Archival',
-    processingFee: 199,
-  },
+};
+
+// Backward-compatible alias mappings
+const TRACK_ALIASES: Record<string, string> = {
+  'backend-intern': 'backend-optimised-intern',
+  'grant-writing-intern': 'grant-writing-fundraising-intern',
+  'full-stack-intern': 'sde-intern',
+  'devops-cloud-intern': 'backend-optimised-intern',
+  'ui-ux-intern': 'frontend-intern',
+  'product-management-intern': 'ai-fluency-intern',
 };
 
 export function getTrack(trackId: string): ServerTrack | null {
-  return SERVER_TRACKS[trackId] || null;
+  if (!trackId || typeof trackId !== 'string') return null;
+  const direct = SERVER_TRACKS[trackId];
+  if (direct) return direct;
+  const aliased = TRACK_ALIASES[trackId];
+  if (aliased && SERVER_TRACKS[aliased]) return SERVER_TRACKS[aliased];
+  return null;
 }

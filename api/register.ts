@@ -30,35 +30,39 @@ export default async function handler(req: any, res: any) {
     // 1. Strict Input Validation
     const validation = validateRegisterInput(body);
     if (!validation.isValid) {
+      const errorList = Object.values(validation.errors);
+      const detailMsg = errorList.length > 0 ? errorList.join(' • ') : 'Invalid registration details';
       return res.status(400).json({
         success: false,
-        message: 'Invalid registration details',
+        message: detailMsg,
         errors: validation.errors,
       });
     }
 
+    const sanitized = validation.sanitized || body;
+
     // 2. Verified Track
-    const track = getTrack(body.trackId);
+    const track = getTrack(sanitized.trackId || body.trackId);
     if (!track) {
       return res.status(400).json({
         success: false,
-        message: 'Selected track does not exist.',
+        message: 'Selected internship track does not exist.',
       });
     }
 
     // 3. Create Applicant and Pending Registration in Database
     const { applicantId, registrationId, registrationCode } = await createApplicantAndRegistration(
       {
-        fullName: body.fullName.trim(),
-        email: body.email.trim().toLowerCase(),
-        phone: body.phone.trim(),
-        college: body.college.trim(),
-        degreeBranch: body.degreeBranch.trim(),
-        academicYear: body.academicYear.trim(),
-        gradYear: Number(body.gradYear),
-        linkedinUrl: body.linkedinUrl?.trim(),
-        githubUrl: body.githubUrl?.trim(),
-        portfolioUrl: body.portfolioUrl?.trim(),
+        fullName: String(sanitized.fullName || body.fullName).trim(),
+        email: String(sanitized.email || body.email).trim().toLowerCase(),
+        phone: String(sanitized.phone || body.phone).trim(),
+        college: String(sanitized.college || body.college).trim(),
+        degreeBranch: String(sanitized.degreeBranch || body.degreeBranch).trim(),
+        academicYear: String(sanitized.academicYear || body.academicYear).trim(),
+        gradYear: Number(sanitized.gradYear || body.gradYear),
+        linkedinUrl: sanitized.linkedinUrl?.trim() || body.linkedinUrl?.trim(),
+        githubUrl: sanitized.githubUrl?.trim() || body.githubUrl?.trim(),
+        portfolioUrl: sanitized.portfolioUrl?.trim() || body.portfolioUrl?.trim(),
         consentGiven: true,
       },
       {

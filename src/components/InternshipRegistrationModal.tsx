@@ -133,7 +133,24 @@ export const InternshipRegistrationModal: React.FC<InternshipRegistrationModalPr
     setStatusMessage('Initiating verified registration and creating Razorpay order...');
 
     try {
-      const fullPhone = `${countryCode.trim()} ${phoneNumber.trim()}`;
+      // Intelligently sanitize phone number to prevent duplicate country codes
+      let cleanPhone = phoneNumber.trim().replace(/^0+/, '');
+      let finalPhone = '';
+      if (cleanPhone.startsWith('+')) {
+        finalPhone = cleanPhone;
+      } else if (cleanPhone.startsWith(countryCode.replace('+', ''))) {
+        finalPhone = `+${cleanPhone}`;
+      } else {
+        finalPhone = `${countryCode.trim()} ${cleanPhone}`;
+      }
+
+      // Normalize optional URLs
+      const formatUrl = (u: string) => {
+        const val = u.trim();
+        if (!val) return undefined;
+        if (/^https?:\/\//i.test(val)) return val;
+        return `https://${val}`;
+      };
 
       // 1. Initiate registration on the backend
       const res = await fetch('/api/register', {
@@ -142,15 +159,15 @@ export const InternshipRegistrationModal: React.FC<InternshipRegistrationModalPr
         body: JSON.stringify({
           fullName: fullName.trim(),
           email: email.trim().toLowerCase(),
-          phone: fullPhone,
+          phone: finalPhone,
           college: college.trim(),
           degreeBranch: degreeBranch.trim(),
           academicYear,
           gradYear: Number(gradYear),
           trackId: selectedTrackId,
-          linkedinUrl: linkedinUrl.trim() || undefined,
-          githubUrl: githubUrl.trim() || undefined,
-          portfolioUrl: portfolioUrl.trim() || undefined,
+          linkedinUrl: formatUrl(linkedinUrl),
+          githubUrl: formatUrl(githubUrl),
+          portfolioUrl: formatUrl(portfolioUrl),
           consentGiven: true,
         }),
       });
@@ -158,7 +175,10 @@ export const InternshipRegistrationModal: React.FC<InternshipRegistrationModalPr
       const data = await res.json();
       if (!res.ok || !data.success) {
         setStatus('failed');
-        setErrorMessage(data.message || 'Failed to initiate registration.');
+        const detailedError = data.errors && Object.values(data.errors).length > 0
+          ? Object.values(data.errors).join(' • ')
+          : (data.message || 'Failed to initiate registration.');
+        setErrorMessage(detailedError);
         if (data.errors) setErrors(data.errors);
         return;
       }

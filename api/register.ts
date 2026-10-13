@@ -1,11 +1,11 @@
 // API: POST /api/register
 // Validates applicant info, creates pending registration, and creates Razorpay Order for fixed 199 INR
 
-import { validateRegisterInput } from '../server/validation';
-import { getTrack } from '../server/tracks';
-import { createApplicantAndRegistration, recordInitialPayment } from '../server/supabase';
-import { createRazorpayOrder, getRazorpayClient } from '../server/razorpay';
-import { CONFIG } from '../server/config';
+import { validateRegisterInput } from '../server/validation.ts';
+import { getTrack } from '../server/tracks.ts';
+import { createApplicantAndRegistration, recordInitialPayment } from '../server/supabase.ts';
+import { createRazorpayOrder, getRazorpayClient } from '../server/razorpay.ts';
+import { CONFIG } from '../server/config.ts';
 
 export default async function handler(req: any, res: any) {
   // CORS Handling

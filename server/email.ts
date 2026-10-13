@@ -1,7 +1,7 @@
 // Resend Email Integration with DotRepo Branding
 
 import { Resend } from 'resend';
-import { CONFIG } from './config';
+import { CONFIG } from './config.ts';
 
 let resendInstance: Resend | null = null;
 

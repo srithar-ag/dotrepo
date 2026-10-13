@@ -1,6 +1,6 @@
 // Backend Input Validation Rules
 
-import { getTrack } from './tracks';
+import { getTrack } from './tracks.ts';
 
 export interface RegisterInput {
   fullName: string;

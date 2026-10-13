@@ -8,11 +8,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Handlers
-import registerHandler from './api/register';
-import verifyPaymentHandler from './api/verify-payment';
-import webhookHandler from './api/webhook';
-import adminRegistrationsHandler from './api/admin/registrations';
-import adminRegistrationStatusHandler from './api/admin/registration-status';
+import registerHandler from './api/register.ts';
+import verifyPaymentHandler from './api/verify-payment.ts';
+import webhookHandler from './api/webhook.ts';
+import adminRegistrationsHandler from './api/admin/registrations.ts';
+import adminRegistrationStatusHandler from './api/admin/registration-status.ts';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

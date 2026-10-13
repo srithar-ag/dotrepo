@@ -1,7 +1,7 @@
 // Admin Authorization Verification Helper
 
-import { getSupabaseAdmin } from './supabase';
-import { CONFIG } from './config';
+import { getSupabaseAdmin } from './supabase.ts';
+import { CONFIG } from './config.ts';
 
 export interface AdminUser {
   email: string;

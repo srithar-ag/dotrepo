@@ -2,7 +2,7 @@
 
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
-import { CONFIG } from './config';
+import { CONFIG } from './config.ts';
 
 let razorpayInstance: Razorpay | null = null;
 

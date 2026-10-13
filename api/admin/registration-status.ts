@@ -1,8 +1,8 @@
 // API: POST /api/admin/registration-status
 // Updates onboarding status for an applicant
 
-import { verifyAdminRequest } from '../../server/adminAuth';
-import { updateOnboardingStatus } from '../../server/supabase';
+import { verifyAdminRequest } from '../../server/adminAuth.ts';
+import { updateOnboardingStatus } from '../../server/supabase.ts';
 
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', '*');

@@ -1,8 +1,8 @@
 // API: GET /api/admin/registrations
 // Protected administrator registration management, analytics metrics, and CSV export
 
-import { verifyAdminRequest } from '../../server/adminAuth';
-import { getAdminRegistrations } from '../../server/supabase';
+import { verifyAdminRequest } from '../../server/adminAuth.ts';
+import { getAdminRegistrations } from '../../server/supabase.ts';
 
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', '*');

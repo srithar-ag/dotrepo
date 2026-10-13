@@ -1,10 +1,10 @@
 // API: POST /api/webhook
 // Authoritative Razorpay Webhook processor with raw signature verification
 
-import { verifyWebhookSignature } from '../server/razorpay';
-import { getRegistrationByOrderOrId, markPaymentVerified } from '../server/supabase';
-import { sendPaymentVerifiedEmail } from '../server/email';
-import { CONFIG } from '../server/config';
+import { verifyWebhookSignature } from '../server/razorpay.ts';
+import { getRegistrationByOrderOrId, markPaymentVerified } from '../server/supabase.ts';
+import { sendPaymentVerifiedEmail } from '../server/email.ts';
+import { CONFIG } from '../server/config.ts';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') {

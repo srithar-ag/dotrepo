@@ -3,7 +3,7 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
-import { CONFIG } from './config';
+import { CONFIG } from './config.ts';
 
 let supabaseClient: SupabaseClient | null = null;
 

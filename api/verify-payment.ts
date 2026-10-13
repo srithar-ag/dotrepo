@@ -1,10 +1,10 @@
 // API: POST /api/verify-payment
 // Cryptographically verifies Razorpay payment signature and updates database to paid
 
-import { verifyPaymentSignature } from '../server/razorpay';
-import { getRegistrationByOrderOrId, markPaymentVerified } from '../server/supabase';
-import { sendPaymentVerifiedEmail } from '../server/email';
-import { CONFIG } from '../server/config';
+import { verifyPaymentSignature } from '../server/razorpay.ts';
+import { getRegistrationByOrderOrId, markPaymentVerified } from '../server/supabase.ts';
+import { sendPaymentVerifiedEmail } from '../server/email.ts';
+import { CONFIG } from '../server/config.ts';
 
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', '*');

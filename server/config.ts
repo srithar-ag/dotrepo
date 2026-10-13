@@ -22,8 +22,8 @@ export const CONFIG = {
   SUPABASE_SERVICE_ROLE_KEY: (process.env.SUPABASE_SERVICE_ROLE_KEY || '').trim(),
   SUPABASE_ANON_KEY: (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '').trim(),
 
-  // Razorpay
-  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID || '',
+  // Razorpay (Configured with Live Keys)
+  RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID || process.env.VITE_RAZORPAY_KEY_ID || 'rzp_live_TnVSv0nYR7S2bd',
   RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET || '',
   RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET || '',
 
@@ -33,6 +33,7 @@ export const CONFIG = {
 
   // App & Admin
   APP_URL: process.env.APP_URL || 'http://localhost:3000',
+  ADMIN_SECRET_KEY: (process.env.ADMIN_SECRET_KEY || 'admin-authorized-demo').trim(),
   ADMIN_EMAILS: (process.env.ADMIN_EMAILS || 'sritharag17@gmail.com')
     .split(',')
     .map((e) => e.trim().toLowerCase())

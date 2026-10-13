@@ -182,7 +182,7 @@ export const InternshipRegistrationModal: React.FC<InternshipRegistrationModalPr
       }
 
       const razorpayOptions = {
-        key: orderData.razorpayKeyId,
+        key: orderData.razorpayKeyId || (import.meta as any).env?.VITE_RAZORPAY_KEY_ID || 'rzp_live_TnVSv0nYR7S2bd',
         amount: orderData.amount, // 19900 paise
         currency: orderData.currency || 'INR',
         name: 'DotRepo Corp.',

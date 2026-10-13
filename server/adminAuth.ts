@@ -20,12 +20,16 @@ export async function verifyAdminRequest(
     return { isAuthorized: false, error: 'No token provided' };
   }
 
-  // Development & test suite demo token
-  if (token.startsWith('dev-admin-') || token === 'admin-authorized-demo') {
+  // Configured administrative secret key or test suite tokens
+  if (
+    (CONFIG.ADMIN_SECRET_KEY && token === CONFIG.ADMIN_SECRET_KEY) ||
+    token.startsWith('dev-admin-') ||
+    token === 'admin-authorized-demo'
+  ) {
     return {
       isAuthorized: true,
       user: {
-        email: CONFIG.ADMIN_EMAILS[0] || 'dotrepocorp@gmail.com',
+        email: CONFIG.ADMIN_EMAILS[0] || 'sritharag17@gmail.com',
         role: 'super_admin',
       },
     };

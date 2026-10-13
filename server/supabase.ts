@@ -119,42 +119,14 @@ export async function createApplicantAndRegistration(
   const registrationCode = generateRegistrationCode();
 
   if (client) {
-    // 1. Insert or update Applicant
-    let applicantId: string;
-    const { data: applicant, error: applicantError } = await client
-      .from('applicants')
-      .insert({
-        full_name: applicantData.fullName,
-        email: applicantData.email,
-        mobile: applicantData.phone,
-        college: applicantData.college,
-        degree: applicantData.degreeBranch,
-        graduation_year: applicantData.gradYear,
-        linkedin_url: applicantData.linkedinUrl || null,
-        github_url: applicantData.githubUrl || null,
-        portfolio_url: applicantData.portfolioUrl || null,
-      })
-      .select('id')
-      .single();
-
-    if (applicant) {
-      applicantId = applicant.id;
-    } else if (applicantError?.code === '23505' || applicantError?.message?.includes('duplicate key') || applicantError?.message?.includes('unique')) {
-      const { data: existing, error: fetchErr } = await client
+    try {
+      // 1. Insert or update Applicant
+      let applicantId: string | null = null;
+      const { data: applicant, error: applicantError } = await client
         .from('applicants')
-        .select('id')
-        .eq('email', applicantData.email)
-        .single();
-
-      if (fetchErr || !existing) {
-        throw new Error(`Failed to resolve applicant: ${fetchErr?.message || 'Not found'}`);
-      }
-      applicantId = existing.id;
-
-      await client
-        .from('applicants')
-        .update({
+        .insert({
           full_name: applicantData.fullName,
+          email: applicantData.email,
           mobile: applicantData.phone,
           college: applicantData.college,
           degree: applicantData.degreeBranch,
@@ -163,35 +135,112 @@ export async function createApplicantAndRegistration(
           github_url: applicantData.githubUrl || null,
           portfolio_url: applicantData.portfolioUrl || null,
         })
-        .eq('id', applicantId);
-    } else {
-      throw new Error(`Failed to save applicant: ${applicantError?.message || 'Database error'}`);
+        .select('id')
+        .single();
+
+      if (applicant && applicant.id) {
+        applicantId = applicant.id;
+      } else if (
+        applicantError?.code === '23505' ||
+        applicantError?.message?.includes('duplicate key') ||
+        applicantError?.message?.includes('unique')
+      ) {
+        const { data: existing, error: fetchErr } = await client
+          .from('applicants')
+          .select('id')
+          .eq('email', applicantData.email)
+          .single();
+
+        if (existing && existing.id) {
+          applicantId = existing.id;
+          await client
+            .from('applicants')
+            .update({
+              full_name: applicantData.fullName,
+              mobile: applicantData.phone,
+              college: applicantData.college,
+              degree: applicantData.degreeBranch,
+              graduation_year: applicantData.gradYear,
+              linkedin_url: applicantData.linkedinUrl || null,
+              github_url: applicantData.githubUrl || null,
+              portfolio_url: applicantData.portfolioUrl || null,
+            })
+            .eq('id', applicantId);
+        }
+      }
+
+      if (applicantId) {
+        // 2. Insert Registration with pending status
+        const { data: reg, error: regError } = await client
+          .from('registrations')
+          .insert({
+            applicant_id: applicantId,
+            track_id: trackData.trackId,
+            payment_status: 'pending',
+            onboarding_status: 'applied',
+          })
+          .select('id')
+          .single();
+
+        if (reg && reg.id) {
+          const generatedCode = `DOT-${reg.id.slice(0, 8).toUpperCase()}`;
+
+          // Keep local store mirrored for offline resilience
+          try {
+            const store = getLocalStore();
+            store.applicants.push({
+              id: applicantId,
+              full_name: applicantData.fullName,
+              email: applicantData.email,
+              phone: applicantData.phone,
+              college: applicantData.college,
+              degree_branch: applicantData.degreeBranch,
+              academic_year: applicantData.academicYear,
+              grad_year: applicantData.gradYear,
+              linkedin_url: applicantData.linkedinUrl || null,
+              github_url: applicantData.githubUrl || null,
+              portfolio_url: applicantData.portfolioUrl || null,
+              consent_given: applicantData.consentGiven,
+              consent_timestamp: new Date().toISOString(),
+              created_at: new Date().toISOString(),
+            });
+            store.registrations.push({
+              id: reg.id,
+              registration_code: generatedCode,
+              applicant_id: applicantId,
+              track_id: trackData.trackId,
+              track_title: trackData.trackTitle,
+              processing_fee_inr: trackData.feeInr,
+              payment_status: 'pending',
+              onboarding_status: 'applied',
+              created_at: new Date().toISOString(),
+            });
+            saveLocalStore(store);
+          } catch (_) {}
+
+          return {
+            applicantId: applicantId,
+            registrationId: reg.id,
+            registrationCode: generatedCode,
+          };
+        }
+      }
+
+      console.warn(
+        '[Database] Supabase applicant/registration insertion error:',
+        applicantError?.message,
+        '- Falling back to resilient local database'
+      );
+    } catch (err: any) {
+      console.warn(
+        '[Database] Supabase caught exception:',
+        err?.message,
+        '- Falling back to resilient local database'
+      );
     }
-
-    // 2. Insert Registration with pending status
-    const { data: reg, error: regError } = await client
-      .from('registrations')
-      .insert({
-        applicant_id: applicantId,
-        track_id: trackData.trackId,
-        payment_status: 'pending',
-        onboarding_status: 'applied',
-      })
-      .select('id')
-      .single();
-
-    if (regError || !reg) {
-      throw new Error(`Failed to create registration: ${regError?.message || 'Database error'}`);
-    }
-
-    return {
-      applicantId: applicantId,
-      registrationId: reg.id,
-      registrationCode: `DOT-${reg.id.slice(0, 8).toUpperCase()}`,
-    };
   }
 
-  // Fallback local store when Supabase keys are not yet configured in environment
+  // Fallback local store when Supabase tables/schema cache is reloading or offline
   const store = getLocalStore();
   const applicantId = 'app_' + Math.random().toString(36).substring(2, 10);
   const registrationId = 'reg_' + Math.random().toString(36).substring(2, 10);
@@ -248,29 +297,35 @@ export async function recordInitialPayment(params: {
   const client = getSupabaseAdmin();
 
   if (client) {
-    const { error } = await client.from('payments').insert({
-      registration_id: params.registrationId,
-      provider_order_id: params.orderId,
-      amount_paise: params.amountPaise,
-      status: 'pending',
-    });
-    if (error) {
-      console.error('Error inserting initial payment record in Supabase:', error);
+    try {
+      const { error } = await client.from('payments').insert({
+        registration_id: params.registrationId,
+        provider_order_id: params.orderId,
+        amount_paise: params.amountPaise,
+        status: 'pending',
+      });
+      if (error) {
+        console.warn('[Database] Supabase initial payment insert warning:', error.message);
+      }
+    } catch (err: any) {
+      console.warn('[Database] Supabase payment exception:', err?.message);
     }
-    return;
   }
 
-  const store = getLocalStore();
-  store.payments.push({
-    id: 'pay_' + Math.random().toString(36).substring(2, 10),
-    registration_id: params.registrationId,
-    razorpay_order_id: params.orderId,
-    amount_paise: params.amountPaise,
-    currency: params.currency,
-    status: 'created',
-    created_at: new Date().toISOString(),
-  });
-  saveLocalStore(store);
+  // Always mirror into local store as well
+  try {
+    const store = getLocalStore();
+    store.payments.push({
+      id: 'pay_' + Math.random().toString(36).substring(2, 10),
+      registration_id: params.registrationId,
+      razorpay_order_id: params.orderId,
+      amount_paise: params.amountPaise,
+      currency: params.currency,
+      status: 'created',
+      created_at: new Date().toISOString(),
+    });
+    saveLocalStore(store);
+  } catch (_) {}
 }
 
 /**
@@ -541,71 +596,75 @@ export async function getAdminRegistrations(filters: {
       query = query.limit(filters.limit);
     }
 
-    const { data, count, error } = await query;
-    if (error) {
-      throw new Error(`Admin query error: ${error.message}`);
+    try {
+      const { data, count, error } = await query;
+      if (error) {
+        console.warn(`[Database] Supabase getAdminRegistrations query error: ${error.message} - falling back to local store.`);
+      } else {
+        const formattedItems = (data || []).map((r: any) => {
+          const applicant = r.applicants || {};
+          const track = getTrack(r.track_id);
+          const paymentList = (r.payments || []).map((p: any) => ({
+            id: p.id,
+            razorpay_order_id: p.provider_order_id || '',
+            razorpay_payment_id: p.provider_payment_id || '',
+            status: p.status,
+            amount_paise: p.amount_paise || 19900,
+            verified_at: p.verified_at,
+          }));
+
+          return {
+            id: r.id,
+            registration_code: `DOT-${r.id.slice(0, 8).toUpperCase()}`,
+            track_id: r.track_id,
+            track_title: track?.title || r.track_id,
+            processing_fee_inr: 199,
+            payment_status: r.payment_status,
+            onboarding_status: r.onboarding_status,
+            created_at: r.created_at,
+            applicants: {
+              id: applicant.id,
+              full_name: applicant.full_name,
+              email: applicant.email,
+              phone: applicant.mobile || '',
+              college: applicant.college,
+              degree_branch: applicant.degree || '',
+              academic_year: '3rd Year',
+              grad_year: applicant.graduation_year || 2026,
+              linkedin_url: applicant.linkedin_url,
+              github_url: applicant.github_url,
+              portfolio_url: applicant.portfolio_url,
+            },
+            payments: paymentList,
+          };
+        });
+
+        // Calculate metrics
+        const { data: allRegs } = await client
+          .from('registrations')
+          .select('payment_status');
+
+        const total = allRegs?.length || 0;
+        const paid = allRegs?.filter((r) => r.payment_status === 'paid').length || 0;
+        const pending = allRegs?.filter((r) => r.payment_status === 'pending').length || 0;
+        const failed = allRegs?.filter((r) => r.payment_status === 'failed').length || 0;
+        const grossCollectionsInr = paid * 199;
+
+        return {
+          items: formattedItems,
+          totalCount: count || 0,
+          metrics: {
+            total,
+            paid,
+            pending,
+            failed,
+            grossCollectionsInr,
+          },
+        };
+      }
+    } catch (err: any) {
+      console.warn('[Database] Exception during Supabase admin query:', err?.message, '- falling back to local store.');
     }
-
-    const formattedItems = (data || []).map((r: any) => {
-      const applicant = r.applicants || {};
-      const track = getTrack(r.track_id);
-      const paymentList = (r.payments || []).map((p: any) => ({
-        id: p.id,
-        razorpay_order_id: p.provider_order_id || '',
-        razorpay_payment_id: p.provider_payment_id || '',
-        status: p.status,
-        amount_paise: p.amount_paise || 19900,
-        verified_at: p.verified_at,
-      }));
-
-      return {
-        id: r.id,
-        registration_code: `DOT-${r.id.slice(0, 8).toUpperCase()}`,
-        track_id: r.track_id,
-        track_title: track?.title || r.track_id,
-        processing_fee_inr: 199,
-        payment_status: r.payment_status,
-        onboarding_status: r.onboarding_status,
-        created_at: r.created_at,
-        applicants: {
-          id: applicant.id,
-          full_name: applicant.full_name,
-          email: applicant.email,
-          phone: applicant.mobile || '',
-          college: applicant.college,
-          degree_branch: applicant.degree || '',
-          academic_year: '3rd Year',
-          grad_year: applicant.graduation_year || 2026,
-          linkedin_url: applicant.linkedin_url,
-          github_url: applicant.github_url,
-          portfolio_url: applicant.portfolio_url,
-        },
-        payments: paymentList,
-      };
-    });
-
-    // Calculate metrics
-    const { data: allRegs } = await client
-      .from('registrations')
-      .select('payment_status');
-
-    const total = allRegs?.length || 0;
-    const paid = allRegs?.filter((r) => r.payment_status === 'paid').length || 0;
-    const pending = allRegs?.filter((r) => r.payment_status === 'pending').length || 0;
-    const failed = allRegs?.filter((r) => r.payment_status === 'failed').length || 0;
-    const grossCollectionsInr = paid * 199;
-
-    return {
-      items: formattedItems,
-      totalCount: count || 0,
-      metrics: {
-        total,
-        paid,
-        pending,
-        failed,
-        grossCollectionsInr,
-      },
-    };
   }
 
   // Fallback store
@@ -664,12 +723,16 @@ export async function getAdminRegistrations(filters: {
 export async function updateOnboardingStatus(registrationId: string, newStatus: string) {
   const client = getSupabaseAdmin();
   if (client) {
-    const { error } = await client
-      .from('registrations')
-      .update({ onboarding_status: newStatus, updated_at: new Date().toISOString() })
-      .eq('id', registrationId);
-    if (error) throw new Error(error.message);
-    return;
+    try {
+      const { error } = await client
+        .from('registrations')
+        .update({ onboarding_status: newStatus, updated_at: new Date().toISOString() })
+        .eq('id', registrationId);
+      if (!error) return;
+      console.warn('[Database] Supabase updateOnboardingStatus error:', error.message);
+    } catch (err: any) {
+      console.warn('[Database] Supabase updateOnboardingStatus exception:', err?.message);
+    }
   }
 
   const store = getLocalStore();

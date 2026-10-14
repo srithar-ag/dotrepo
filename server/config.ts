@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config({ override: true });
+
 function normalizeSupabaseUrl(raw: string | undefined): string {
   if (!raw) return '';
   const trimmed = raw.trim();

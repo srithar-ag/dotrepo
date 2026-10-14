@@ -3,8 +3,15 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import path from 'path';
+import crypto from 'crypto';
 import { CONFIG } from './config.ts';
 import { getTrack } from './tracks.ts';
+import { getRazorpayClient } from './razorpay.ts';
+
+export function isValidUuid(id: any): boolean {
+  if (typeof id !== 'string') return false;
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+}
 
 let supabaseClient: SupabaseClient | null = null;
 
@@ -140,12 +147,8 @@ export async function createApplicantAndRegistration(
 
       if (applicant && applicant.id) {
         applicantId = applicant.id;
-      } else if (
-        applicantError?.code === '23505' ||
-        applicantError?.message?.includes('duplicate key') ||
-        applicantError?.message?.includes('unique')
-      ) {
-        const { data: existing, error: fetchErr } = await client
+      } else {
+        const { data: existing } = await client
           .from('applicants')
           .select('id')
           .eq('email', applicantData.email)
@@ -242,8 +245,8 @@ export async function createApplicantAndRegistration(
 
   // Fallback local store when Supabase tables/schema cache is reloading or offline
   const store = getLocalStore();
-  const applicantId = 'app_' + Math.random().toString(36).substring(2, 10);
-  const registrationId = 'reg_' + Math.random().toString(36).substring(2, 10);
+  const applicantId = crypto.randomUUID();
+  const registrationId = crypto.randomUUID();
 
   const newApplicant = {
     id: applicantId,
@@ -329,102 +332,276 @@ export async function recordInitialPayment(params: {
 }
 
 /**
- * Finds registration and payment details by Razorpay order ID or Registration ID
+ * Finds registration and payment details by Razorpay order ID or Registration ID.
+ * Robust 3-tier lookup:
+ * 1. Authoritative Supabase lookup (with strict UUID validation & order ID linkage)
+ * 2. Local resilient store lookup
+ * 3. Authoritative Razorpay API Order/Payment lookup & auto-recovery (so no paid user is ever lost)
  */
 export async function getRegistrationByOrderOrId(params: {
   orderId?: string;
   registrationId?: string;
 }) {
   const client = getSupabaseAdmin();
+  const orderId = params.orderId?.trim();
+  const regId = params.registrationId?.trim();
 
+  // 1. Supabase Lookup
   if (client) {
-    let targetRegId = params.registrationId;
+    try {
+      let targetRegId: string | null = null;
 
-    if (!targetRegId && params.orderId) {
-      const { data: payment } = await client
-        .from('payments')
-        .select('registration_id')
-        .eq('provider_order_id', params.orderId)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single();
+      // Primary: Look up by Razorpay order ID in payments table
+      if (orderId) {
+        const { data: payment } = await client
+          .from('payments')
+          .select('registration_id')
+          .eq('provider_order_id', orderId)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
 
-      if (!payment) return null;
-      targetRegId = payment.registration_id;
+        if (payment?.registration_id && isValidUuid(payment.registration_id)) {
+          targetRegId = payment.registration_id;
+        }
+      }
+
+      // Secondary: Check if regId is a valid UUID
+      if (!targetRegId && regId && isValidUuid(regId)) {
+        targetRegId = regId;
+      }
+
+      if (targetRegId) {
+        const { data: reg, error } = await client
+          .from('registrations')
+          .select(`
+            id,
+            track_id,
+            payment_status,
+            onboarding_status,
+            applicant_id,
+            created_at,
+            applicants (
+              id,
+              full_name,
+              email,
+              mobile,
+              college,
+              degree,
+              graduation_year
+            )
+          `)
+          .eq('id', targetRegId)
+          .single();
+
+        if (reg && !error) {
+          const applicant: any = reg.applicants || {};
+          const track = getTrack(reg.track_id);
+          return {
+            id: reg.id,
+            registration_code: `DOT-${reg.id.slice(0, 8).toUpperCase()}`,
+            track_id: reg.track_id,
+            track_title: track?.title || reg.track_id,
+            processing_fee_inr: 199,
+            payment_status: reg.payment_status,
+            onboarding_status: reg.onboarding_status,
+            applicant_id: reg.applicant_id,
+            created_at: reg.created_at,
+            applicants: {
+              id: applicant.id,
+              full_name: applicant.full_name,
+              email: applicant.email,
+              phone: applicant.mobile || '',
+              college: applicant.college,
+              degree_branch: applicant.degree || '',
+              academic_year: '3rd Year',
+              grad_year: applicant.graduation_year || 2026,
+            },
+          };
+        }
+      }
+    } catch (err: any) {
+      console.warn('[Database] getRegistrationByOrderOrId Supabase query error:', err?.message);
+    }
+  }
+
+  // 2. Local Store Lookup
+  try {
+    const store = getLocalStore();
+    let reg: any = null;
+
+    if (orderId) {
+      const payment = store.payments.find((p: any) => p.razorpay_order_id === orderId);
+      if (payment) {
+        reg = store.registrations.find((r: any) => r.id === payment.registration_id);
+      }
     }
 
-    if (targetRegId) {
-      const { data: reg, error } = await client
-        .from('registrations')
-        .select(`
-          id,
-          track_id,
-          payment_status,
-          onboarding_status,
-          applicant_id,
-          created_at,
-          applicants (
-            id,
-            full_name,
-            email,
-            mobile,
-            college,
-            degree,
-            graduation_year
-          )
-        `)
-        .eq('id', targetRegId)
-        .single();
+    if (!reg && regId) {
+      reg = store.registrations.find((r: any) => r.id === regId);
+    }
 
-      if (error || !reg) return null;
-
-      const applicant: any = reg.applicants || {};
-      const track = getTrack(reg.track_id);
+    if (reg) {
+      const applicant = store.applicants.find((a: any) => a.id === reg.applicant_id);
       return {
-        id: reg.id,
-        registration_code: `DOT-${reg.id.slice(0, 8).toUpperCase()}`,
-        track_id: reg.track_id,
-        track_title: track?.title || reg.track_id,
-        processing_fee_inr: 199,
-        payment_status: reg.payment_status,
-        onboarding_status: reg.onboarding_status,
-        applicant_id: reg.applicant_id,
-        created_at: reg.created_at,
-        applicants: {
-          id: applicant.id,
-          full_name: applicant.full_name,
-          email: applicant.email,
-          phone: applicant.mobile || '',
-          college: applicant.college,
-          degree_branch: applicant.degree || '',
-          academic_year: '3rd Year',
-          grad_year: applicant.graduation_year || 2026,
-        },
+        ...reg,
+        applicants: applicant,
       };
     }
-    return null;
+  } catch (err: any) {
+    console.warn('[Database] getRegistrationByOrderOrId local store error:', err?.message);
   }
 
-  // Local store fallback
-  const store = getLocalStore();
-  let reg = null;
+  // 3. Authoritative Razorpay API Lookup & Auto-Recovery
+  // If order was created in Razorpay, auto-reconstruct and persist the registration immediately!
+  if (orderId) {
+    try {
+      const rzp = getRazorpayClient();
+      if (rzp) {
+        const order = await rzp.orders.fetch(orderId);
+        if (order && order.id) {
+          const notes: any = order.notes || {};
+          const trackId = notes.track_id || 'ai-fluency-intern';
+          const track = getTrack(trackId);
+          let email = (notes.applicant_email || '').toLowerCase().trim();
+          const regCode = notes.registration_code || order.receipt || generateRegistrationCode();
 
-  if (params.registrationId) {
-    reg = store.registrations.find((r: any) => r.id === params.registrationId);
-  } else if (params.orderId) {
-    const payment = store.payments.find((p: any) => p.razorpay_order_id === params.orderId);
-    if (payment) {
-      reg = store.registrations.find((r: any) => r.id === payment.registration_id);
+          let applicantPhone = '';
+          let applicantFullName = '';
+          let paymentStatus = order.status === 'paid' ? 'paid' : 'pending';
+
+          try {
+            const payList = await rzp.orders.fetchPayments(orderId);
+            if (payList?.items && payList.items.length > 0) {
+              const latestPay = payList.items[0];
+              if (latestPay.contact) applicantPhone = latestPay.contact;
+              if (latestPay.email && !email) email = latestPay.email.toLowerCase().trim();
+              if (latestPay.status === 'captured') paymentStatus = 'paid';
+            }
+          } catch (_) {}
+
+          let applicantId = crypto.randomUUID();
+          let registrationId = crypto.randomUUID();
+
+          if (client) {
+            try {
+              if (email) {
+                const { data: existingApp } = await client
+                  .from('applicants')
+                  .select('id, full_name, mobile, college, degree, graduation_year')
+                  .eq('email', email)
+                  .single();
+
+                if (existingApp?.id) {
+                  applicantId = existingApp.id;
+                  applicantFullName = existingApp.full_name || applicantFullName;
+                  applicantPhone = existingApp.mobile || applicantPhone;
+                }
+              }
+
+              if (!applicantFullName) {
+                applicantFullName = email ? email.split('@')[0] : 'Applicant';
+              }
+
+              if (!applicantId) {
+                const { data: newApp } = await client
+                  .from('applicants')
+                  .insert({
+                    id: applicantId,
+                    full_name: applicantFullName,
+                    email: email || 'applicant@dotrepo.com',
+                    mobile: applicantPhone || '+91 9999999999',
+                    college: 'Engineering College',
+                    degree: 'B.Tech',
+                    graduation_year: 2026,
+                  })
+                  .select('id')
+                  .single();
+                if (newApp?.id) applicantId = newApp.id;
+              }
+
+              const { data: newReg } = await client
+                .from('registrations')
+                .insert({
+                  id: registrationId,
+                  applicant_id: applicantId,
+                  track_id: track?.id || trackId,
+                  payment_status: paymentStatus,
+                  onboarding_status: 'applied',
+                })
+                .select('id')
+                .single();
+
+              if (newReg?.id) {
+                registrationId = newReg.id;
+              }
+
+              await client.from('payments').insert({
+                registration_id: registrationId,
+                provider_order_id: orderId,
+                amount_paise: order.amount || 19900,
+                status: paymentStatus,
+              });
+            } catch (supaErr: any) {
+              console.warn('[Database] Auto-recovery Supabase insert error:', supaErr?.message);
+            }
+          }
+
+          // Mirror in local store
+          try {
+            const store = getLocalStore();
+            store.registrations.push({
+              id: registrationId,
+              registration_code: regCode,
+              applicant_id: applicantId,
+              track_id: track?.id || trackId,
+              track_title: track?.title || 'Internship',
+              processing_fee_inr: 199,
+              payment_status: paymentStatus,
+              onboarding_status: 'applied',
+              created_at: new Date().toISOString(),
+            });
+            store.payments.push({
+              id: 'pay_' + Math.random().toString(36).substring(2, 10),
+              registration_id: registrationId,
+              razorpay_order_id: orderId,
+              amount_paise: order.amount || 19900,
+              currency: 'INR',
+              status: paymentStatus,
+              created_at: new Date().toISOString(),
+            });
+            saveLocalStore(store);
+          } catch (_) {}
+
+          return {
+            id: registrationId,
+            registration_code: regCode,
+            track_id: track?.id || trackId,
+            track_title: track?.title || 'Internship Track',
+            processing_fee_inr: 199,
+            payment_status: paymentStatus,
+            onboarding_status: 'applied',
+            applicant_id: applicantId,
+            created_at: new Date().toISOString(),
+            applicants: {
+              id: applicantId,
+              full_name: applicantFullName || 'Intern',
+              email: email,
+              phone: applicantPhone,
+              college: 'Engineering College',
+              degree_branch: 'B.Tech',
+              academic_year: '3rd Year',
+              grad_year: 2026,
+            },
+          };
+        }
+      }
+    } catch (rzpErr: any) {
+      console.warn('[Database] Auto-recovery Razorpay API error:', rzpErr?.message);
     }
   }
 
-  if (!reg) return null;
-  const applicant = store.applicants.find((a: any) => a.id === reg.applicant_id);
-
-  return {
-    ...reg,
-    applicants: applicant,
-  };
+  return null;
 }
 
 /**
@@ -445,55 +622,73 @@ export async function markPaymentVerified(params: {
   const now = new Date().toISOString();
 
   if (client) {
-    // 1. Check current registration status
-    const { data: currentReg } = await client
-      .from('registrations')
-      .select('payment_status')
-      .eq('id', params.registrationId)
-      .single();
+    try {
+      // Find actual registration ID if registrationId is not a UUID
+      let regUuid = isValidUuid(params.registrationId) ? params.registrationId : null;
 
-    if (currentReg?.payment_status === 'paid') {
-      // Already verified, return early (idempotent)
-      return { alreadyVerified: true };
+      if (!regUuid && params.orderId) {
+        const { data: payRow } = await client
+          .from('payments')
+          .select('registration_id')
+          .eq('provider_order_id', params.orderId)
+          .limit(1)
+          .single();
+        if (payRow?.registration_id && isValidUuid(payRow.registration_id)) {
+          regUuid = payRow.registration_id;
+        }
+      }
+
+      if (regUuid) {
+        // 1. Check current registration status
+        const { data: currentReg } = await client
+          .from('registrations')
+          .select('payment_status')
+          .eq('id', regUuid)
+          .single();
+
+        if (currentReg?.payment_status === 'paid') {
+          return { alreadyVerified: true };
+        }
+
+        // 2. Update registration status to 'paid'
+        await client
+          .from('registrations')
+          .update({ payment_status: 'paid' })
+          .eq('id', regUuid);
+
+        // 3. Update payment record to 'paid' by provider_order_id
+        const { data: existingPay } = await client
+          .from('payments')
+          .select('id')
+          .eq('provider_order_id', params.orderId)
+          .limit(1)
+          .single();
+
+        if (existingPay) {
+          await client
+            .from('payments')
+            .update({
+              provider_payment_id: params.paymentId,
+              status: 'paid',
+              verified_at: now,
+            })
+            .eq('id', existingPay.id);
+        } else {
+          await client.from('payments').insert({
+            registration_id: regUuid,
+            provider_order_id: params.orderId,
+            provider_payment_id: params.paymentId,
+            amount_paise: params.amountPaise,
+            status: 'paid',
+            verified_at: now,
+          });
+        }
+
+        return { alreadyVerified: false };
+      }
+    } catch (err: any) {
+      console.warn('[Database] markPaymentVerified Supabase error:', err?.message);
     }
-
-    // 2. Update registration status to 'paid'
-    await client
-      .from('registrations')
-      .update({
-        payment_status: 'paid',
-      })
-      .eq('id', params.registrationId);
-
-    // 3. Update payment record to 'paid'
-    const { data: existingPay } = await client
-      .from('payments')
-      .select('id')
-      .eq('registration_id', params.registrationId)
-      .limit(1)
-      .single();
-
-    if (existingPay) {
-      await client
-        .from('payments')
-        .update({
-          provider_payment_id: params.paymentId,
-          status: 'paid',
-          verified_at: now,
-        })
-        .eq('id', existingPay.id);
-    } else {
-      await client.from('payments').insert({
-        registration_id: params.registrationId,
-        provider_order_id: params.orderId,
-        provider_payment_id: params.paymentId,
-        amount_paise: params.amountPaise,
-        status: 'paid',
-        verified_at: now,
-      });
-    }
-
-    return { alreadyVerified: false };
   }
 
   // Local fallback

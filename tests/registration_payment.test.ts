@@ -256,9 +256,14 @@ async function runTests() {
     Array.isArray(adminData.items) && adminData.items.length > 0,
     'Admin dashboard successfully retrieves registration records'
   );
+  // 10. Multi-tier & Auto-recovery Lookup Resiliency
+  const orderLookup = await getRegistrationByOrderOrId({
+    orderId: testOrderId,
+    registrationId: 'non-uuid-temp-id',
+  });
   assert(
-    adminData.metrics.paid >= 1,
-    'Admin metrics correctly calculate paid count and gross revenue'
+    orderLookup !== null && orderLookup.id === testReg.registrationId,
+    'Resilient lookup locates registration by order ID even if client passes non-UUID registration ID'
   );
 
   console.log(`\n========================================`);

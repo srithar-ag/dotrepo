@@ -1,6 +1,11 @@
 import { InternshipTrack } from '../types';
 
-export const INTERNSHIP_FORM_URL = 'https://rzbfxytr.formester.com/f/2dwWQiXyG';
+export const INTERNSHIP_FORM_URL = 'https://rzp.io/rzp/dotrepo';
+export const RZP_APPLY_URL = 'https://rzp.io/rzp/dotrepo';
+
+export const redirectToApply = () => {
+  window.location.href = RZP_APPLY_URL;
+};
 
 export const INTERNSHIP_STEPS = [
   {
@@ -431,10 +436,10 @@ export const INTERNSHIP_FAQS = [
   },
   {
     q: 'Can I apply for more than one track?',
-    a: 'We recommend focusing on one primary track to build a standout, in-depth portfolio piece. However, you can indicate secondary interests in the official application form at https://rzbfxytr.formester.com/f/2dwWQiXyG.',
+    a: 'We recommend focusing on one primary track to build a standout, in-depth portfolio piece. However, you can indicate secondary interests in the official application page at https://rzp.io/rzp/dotrepo.',
   },
   {
     q: 'How do I register and start?',
-    a: 'Simply click "Apply Now" to open our official application form at https://rzbfxytr.formester.com/f/2dwWQiXyG. Enter your details, choose your track, submit, and our team will review your application within 24-48 hours.',
+    a: 'Simply click "Apply Now" to open our official application and enrollment page at https://rzp.io/rzp/dotrepo. Enter your details, choose your track, submit, and our team will review your application within 24-48 hours.',
   },
 ];

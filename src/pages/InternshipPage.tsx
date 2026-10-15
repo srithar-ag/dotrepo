@@ -72,7 +72,7 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate, onOp
     if (onOpenRegistration) {
       onOpenRegistration(trackId);
     } else {
-      setInternalRegTrackId(trackId || 'frontend-intern');
+      window.location.href = 'https://rzp.io/rzp/dotrepo';
     }
   };
 

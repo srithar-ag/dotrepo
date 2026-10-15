@@ -475,6 +475,7 @@ export const InternshipCredentialsPanel: React.FC<CredentialsPanelProps> = ({ on
                   onClick={() => {
                     setModalCertificate(null);
                     if (onApplyClick) onApplyClick();
+                    else window.location.href = 'https://rzp.io/rzp/dotrepo';
                   }}
                   className="px-4 py-2 rounded-xl bg-orange-600 hover:bg-orange-500 text-white text-xs font-bold transition-colors cursor-pointer flex items-center gap-1.5"
                 >

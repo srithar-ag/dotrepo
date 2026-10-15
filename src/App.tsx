@@ -88,8 +88,8 @@ export default function App() {
     setContactModalTopic(null);
   };
 
-  const handleOpenRegistration = (trackId?: string) => {
-    setGlobalRegTrackId(trackId || 'frontend-intern');
+  const handleOpenRegistration = (_trackId?: string) => {
+    window.location.href = 'https://rzp.io/rzp/dotrepo';
   };
 
   return (

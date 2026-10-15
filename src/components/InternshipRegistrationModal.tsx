@@ -64,12 +64,6 @@ export const InternshipRegistrationModal: React.FC<InternshipRegistrationModalPr
   const [errorMessage, setErrorMessage] = useState('');
   const [verifiedData, setVerifiedData] = useState<any>(null);
   const [copiedId, setCopiedId] = useState(false);
-  const [pendingPayment, setPendingPayment] = useState<{
-    registrationId: string;
-    orderId: string;
-    paymentId: string;
-    signature?: string;
-  } | null>(null);
 
   // Sync initialTrackId when opened
   useEffect(() => {
@@ -242,19 +236,16 @@ export const InternshipRegistrationModal: React.FC<InternshipRegistrationModalPr
           setStatus('verifying');
           setStatusMessage('Authoritatively verifying payment signature with server...');
 
-          const paymentPayload = {
-            registrationId: orderData.registrationId,
-            orderId: orderData.orderId,
-            paymentId: response.razorpay_payment_id,
-            signature: response.razorpay_signature,
-          };
-          setPendingPayment(paymentPayload);
-
           try {
             const verifyRes = await fetch('/api/verify-payment', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(paymentPayload),
+              body: JSON.stringify({
+                registrationId: orderData.registrationId,
+                orderId: orderData.orderId,
+                paymentId: response.razorpay_payment_id,
+                signature: response.razorpay_signature,
+              }),
             });
 
             const verifyData = await verifyRes.json();
@@ -267,7 +258,6 @@ export const InternshipRegistrationModal: React.FC<InternshipRegistrationModalPr
             }
 
             // Success Confirmed!
-            setPendingPayment(null);
             setVerifiedData({
               ...verifyData.data,
               applicantName: fullName,
@@ -277,7 +267,7 @@ export const InternshipRegistrationModal: React.FC<InternshipRegistrationModalPr
           } catch (vErr: any) {
             console.error('Payment verification error:', vErr);
             setStatus('failed');
-            setErrorMessage('Network error while verifying payment. Click "Verify Completed Payment" below to complete verification.');
+            setErrorMessage('Network error while verifying payment. Please do not re-pay until checking confirmation.');
           }
         },
       };
@@ -298,44 +288,10 @@ export const InternshipRegistrationModal: React.FC<InternshipRegistrationModalPr
     }
   };
 
-  const handleRetryVerification = async () => {
-    if (!pendingPayment) return;
-    setStatus('verifying');
-    setStatusMessage('Authoritatively checking and confirming your payment...');
-
-    try {
-      const verifyRes = await fetch('/api/verify-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(pendingPayment),
-      });
-
-      const verifyData = await verifyRes.json();
-      if (!verifyRes.ok || !verifyData.success) {
-        setStatus('failed');
-        setErrorMessage(verifyData.message || 'Payment verification could not find this transaction.');
-        return;
-      }
-
-      setPendingPayment(null);
-      setVerifiedData({
-        ...verifyData.data,
-        applicantName: fullName,
-        applicantEmail: email,
-      });
-      setStatus('success');
-    } catch (vErr: any) {
-      console.error('Payment verification retry error:', vErr);
-      setStatus('failed');
-      setErrorMessage('Network error while re-verifying payment. Please click below to try again.');
-    }
-  };
-
   const handleResetForm = () => {
     setStatus('idle');
     setErrorMessage('');
     setStatusMessage('');
-    setPendingPayment(null);
   };
 
   return (
@@ -484,25 +440,12 @@ export const InternshipRegistrationModal: React.FC<InternshipRegistrationModalPr
                   <div className="flex-1">
                     <h5 className="text-xs font-bold text-rose-900">Action Required</h5>
                     <p className="text-xs text-rose-700 mt-0.5 leading-relaxed">{errorMessage}</p>
-                    <div className="mt-2.5 flex items-center gap-3">
-                      {pendingPayment && (
-                        <button
-                          type="button"
-                          onClick={handleRetryVerification}
-                          className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-xs cursor-pointer transition-colors"
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>Verify Completed Payment</span>
-                        </button>
-                      )}
-                      <button
-                        type="button"
-                        onClick={handleResetForm}
-                        className="text-xs font-semibold text-rose-800 underline cursor-pointer hover:text-rose-950"
-                      >
-                        Try Again
-                      </button>
-                    </div>
+                    <button
+                      onClick={handleResetForm}
+                      className="mt-2 text-xs font-semibold text-rose-800 underline cursor-pointer hover:text-rose-950"
+                    >
+                      Try Again
+                    </button>
                   </div>
                 </div>
               )}

@@ -1,7 +1,7 @@
 // API: POST /api/verify-payment
 // Cryptographically verifies Razorpay payment signature and updates database to paid
 
-import { verifyPaymentSignature, getRazorpayClient } from '../server/razorpay.ts';
+import { verifyPaymentSignature } from '../server/razorpay.ts';
 import { getRegistrationByOrderOrId, markPaymentVerified } from '../server/supabase.ts';
 import { sendPaymentVerifiedEmail } from '../server/email.ts';
 import { CONFIG } from '../server/config.ts';
@@ -42,36 +42,20 @@ export default async function handler(req: any, res: any) {
       });
     }
 
-    // 2. Cryptographic Signature Verification & Razorpay API Confirmation
+    // 2. Cryptographic Signature Verification
     if (CONFIG.RAZORPAY_KEY_SECRET) {
-      let isValid = false;
-      if (signature) {
-        isValid = verifyPaymentSignature({
-          orderId,
-          paymentId,
-          signature,
+      if (!signature) {
+        return res.status(400).json({
+          success: false,
+          message: 'Razorpay signature is required for authoritative verification.',
         });
       }
 
-      // If HMAC verification didn't pass, verify directly with Razorpay's authoritative API
-      if (!isValid) {
-        try {
-          const rzp = getRazorpayClient();
-          if (rzp) {
-            const pay = await rzp.payments.fetch(paymentId);
-            if (
-              pay &&
-              pay.order_id === orderId &&
-              (pay.status === 'captured' || pay.status === 'authorized')
-            ) {
-              isValid = true;
-              console.info(`[Payment] Authoritatively verified via Razorpay API for ${paymentId}`);
-            }
-          }
-        } catch (apiErr: any) {
-          console.warn('[Payment] Direct Razorpay API verification check error:', apiErr?.message);
-        }
-      }
+      const isValid = verifyPaymentSignature({
+        orderId,
+        paymentId,
+        signature,
+      });
 
       if (!isValid) {
         console.warn(`[Payment Verification Failed] Invalid signature for order ${orderId}, payment ${paymentId}`);

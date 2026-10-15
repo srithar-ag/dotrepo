@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
 // Load environment variables
-dotenv.config({ override: true });
+dotenv.config();
 
 // Handlers
 import registerHandler from './api/register.ts';

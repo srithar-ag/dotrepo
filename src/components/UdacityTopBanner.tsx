@@ -50,7 +50,7 @@ export const UdacityTopBanner: React.FC<UdacityTopBannerProps> = ({
           <button
             onClick={() => {
               if (onOpenRegistration) onOpenRegistration();
-              else window.location.href = 'https://rzp.io/rzp/dotrepo';
+              else window.location.href = 'https://zohosecurepay.in/checkout/n8gqahjg-ynyaxz2dcba44/DotRepo-Internship';
             }}
             className="flex items-center gap-1 px-2.5 sm:px-3 py-1 rounded-full bg-emerald-500 hover:bg-emerald-400 text-neutral-950 text-[10px] sm:text-[11px] font-bold transition-all cursor-pointer shadow-xs whitespace-nowrap"
           >

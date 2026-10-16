@@ -82,7 +82,7 @@ export const HomeInternshipTeaser: React.FC<HomeInternshipTeaserProps> = ({
                 <button
                   onClick={() => {
                     if (onOpenRegistration) onOpenRegistration();
-                    else window.location.href = 'https://rzp.io/rzp/dotrepo';
+                    else window.location.href = 'https://zohosecurepay.in/checkout/n8gqahjg-ynyaxz2dcba44/DotRepo-Internship';
                   }}
                   className="w-full sm:w-auto justify-center px-6 py-3.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-extrabold text-xs transition-colors flex items-center gap-2 cursor-pointer shadow-lg shadow-emerald-500/20"
                 >

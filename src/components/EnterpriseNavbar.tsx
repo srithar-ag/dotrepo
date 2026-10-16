@@ -224,7 +224,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
               <button
                 onClick={() => {
                   if (onOpenRegistration) onOpenRegistration();
-                  else window.location.href = 'https://rzp.io/rzp/dotrepo';
+                  else window.location.href = 'https://zohosecurepay.in/checkout/n8gqahjg-ynyaxz2dcba44/DotRepo-Internship';
                 }}
                 className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs transition-colors shadow-sm cursor-pointer"
               >
@@ -417,7 +417,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                   onClick={() => {
                     setActiveDropdown(null);
                     if (onOpenRegistration) onOpenRegistration();
-                    else window.location.href = 'https://rzp.io/rzp/dotrepo';
+                    else window.location.href = 'https://zohosecurepay.in/checkout/n8gqahjg-ynyaxz2dcba44/DotRepo-Internship';
                   }}
                   className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 text-xs font-bold text-center transition-colors cursor-pointer shadow-sm flex items-center justify-center gap-1.5"
                 >
@@ -580,7 +580,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                 onClick={() => {
                   setMobileMenuOpen(false);
                   if (onOpenRegistration) onOpenRegistration();
-                  else window.location.href = 'https://rzp.io/rzp/dotrepo';
+                  else window.location.href = 'https://zohosecurepay.in/checkout/n8gqahjg-ynyaxz2dcba44/DotRepo-Internship';
                 }}
                 className="w-full py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs text-center flex items-center justify-center gap-2 transition-colors shadow-md cursor-pointer"
               >

@@ -50,7 +50,15 @@ async function startServer() {
   });
 
   if (!isProd) {
-    // Development mode: Mount Vite dev middleware
+    // Development mode: Disable caching so preview iframe never retains stale pre-bundled scripts
+    app.use((_req, res, next) => {
+      res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
+      next();
+    });
+
+    // Mount Vite dev middleware
     const { createServer: createViteServer } = await import('vite');
     const vite = await createViteServer({
       server: { middlewareMode: true, hmr: false },

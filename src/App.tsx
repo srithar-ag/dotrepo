@@ -19,14 +19,17 @@ import { CareersPage } from './pages/CareersPage';
 import { ContactPage } from './pages/ContactPage';
 import { InternshipPage } from './pages/InternshipPage';
 import { AdminPage } from './pages/AdminPage';
-import { InternshipRegistrationModal } from './components/InternshipRegistrationModal';
+import { ZohoCheckoutModal } from './components/ZohoCheckoutModal';
+import { ToastNotification, ToastData } from './components/ToastNotification';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState<PageId>('home');
   const [subId, setSubId] = useState<string | undefined>(undefined);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [contactModalTopic, setContactModalTopic] = useState<string | null>(null);
-  const [globalRegTrackId, setGlobalRegTrackId] = useState<string | null>(null);
+  const [isZohoCheckoutOpen, setIsZohoCheckoutOpen] = useState(false);
+  const [checkoutTrackTitle, setCheckoutTrackTitle] = useState<string | undefined>(undefined);
+  const [activeToast, setActiveToast] = useState<ToastData | null>(null);
 
   // Sync with window.location.hash for shareable URLs and browser back/forward
   useEffect(() => {
@@ -88,8 +91,47 @@ export default function App() {
     setContactModalTopic(null);
   };
 
-  const handleOpenRegistration = (_trackId?: string) => {
-    window.location.href = 'https://rzp.io/rzp/dotrepo';
+  const handlePaymentSuccess = (trackTitle?: string) => {
+    setActiveToast({
+      id: 'toast-' + Date.now(),
+      title: 'Internship Application Received!',
+      message:
+        'Your payment transaction has been confirmed via Zoho Checkout. Your DotRepo Corp. Engineering Internship application details have been officially registered.',
+      trackTitle: trackTitle || 'DotRepo 2026 Batch',
+      duration: 8000,
+    });
+  };
+
+  // Detect payment return via query params, hash or custom events
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const hash = window.location.hash;
+    if (
+      params.get('payment') === 'success' ||
+      params.get('status') === 'success' ||
+      params.get('zoho_status') === 'success' ||
+      params.get('payment_status') === 'success' ||
+      hash.includes('payment-success')
+    ) {
+      handlePaymentSuccess(params.get('track') || undefined);
+      const cleanUrl =
+        window.location.pathname +
+        (hash.includes('payment-success') ? '#internship' : hash);
+      window.history.replaceState({}, document.title, cleanUrl);
+    }
+
+    const handleCustomPaymentEvent = (e: any) => {
+      handlePaymentSuccess(e.detail?.trackTitle);
+    };
+
+    window.addEventListener('dotrepo:payment_success', handleCustomPaymentEvent);
+    return () =>
+      window.removeEventListener('dotrepo:payment_success', handleCustomPaymentEvent);
+  }, []);
+
+  const handleOpenRegistration = (trackId?: string) => {
+    setCheckoutTrackTitle(trackId);
+    setIsZohoCheckoutOpen(true);
   };
 
   return (
@@ -211,11 +253,19 @@ export default function App() {
         onClose={handleCloseContactModal}
       />
 
-      {/* Global Native Internship Registration & Razorpay Payment Modal */}
-      <InternshipRegistrationModal
-        isOpen={globalRegTrackId !== null}
-        initialTrackId={globalRegTrackId || undefined}
-        onClose={() => setGlobalRegTrackId(null)}
+      {/* Embedded Zoho Checkout Payment Modal for Internship Applications */}
+      <ZohoCheckoutModal
+        isOpen={isZohoCheckoutOpen}
+        trackTitle={checkoutTrackTitle}
+        onClose={() => setIsZohoCheckoutOpen(false)}
+        onPaymentSuccess={handlePaymentSuccess}
+      />
+
+      {/* Global Payment & Application Success Toast Notification */}
+      <ToastNotification
+        toast={activeToast}
+        onDismiss={() => setActiveToast(null)}
+        onViewInternship={() => handleNavigate('internship')}
       />
     </div>
   );

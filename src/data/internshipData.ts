@@ -416,10 +416,6 @@ export const INTERNSHIP_TRACKS: InternshipTrack[] = [
 
 export const INTERNSHIP_FAQS = [
   {
-    q: 'What is the ₹199 Enrollment / Onboarding Fee for Internships?',
-    a: 'The ₹199 enrollment fee is a nominal, one-time fee that covers student verification, automated credentials setup, access to our candidate portal, and administrative batch onboarding. It guarantees serious applicants and dedicated engineering resource allocation.',
-  },
-  {
     q: 'What capstone projects do interns work on?',
     a: 'Interns receive and build production-grade capstone projects tailored to their chosen technical track. Each capstone includes clear architecture specifications, automated CI/CD checks, and portfolio deliverables to showcase real-world proof of competence.',
   },

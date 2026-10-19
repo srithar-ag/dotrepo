@@ -79,7 +79,7 @@ export const SearchModal: React.FC<SearchModalProps> = ({ isOpen, onClose, onNav
           {filteredInternships.length > 0 && (
             <div>
               <span className="text-[10px] uppercase font-mono tracking-wider text-emerald-600 block mb-2 px-2 font-bold">
-                DotRepo Corp. Internships (13 Tracks · ₹199)
+                DotRepo Corp. Internships (13 Tracks)
               </span>
               <div className="space-y-1">
                 {filteredInternships.map((track) => (

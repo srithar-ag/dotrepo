@@ -524,109 +524,6 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate, onOp
         </div>
       </section>
 
-      {/* Fee Structure Transparency Section */}
-      <section className="py-16 bg-[#0a0d18] border-y border-neutral-800">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
-            <span className="text-xs font-mono text-emerald-400 uppercase tracking-widest">
-              Simple & Transparent Fee Structure
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mt-1">
-              Affordable, Student-Centric Model
-            </h2>
-            <p className="text-neutral-400 text-xs sm:text-sm mt-2 max-w-xl mx-auto">
-              Transparent, student-centric model. Full access to learning milestones, production capstone projects, and verified credentials.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* ₹199 Internship Fee Card */}
-            <div className="p-6 rounded-2xl bg-neutral-900 border border-emerald-500/50 relative shadow-xl">
-              <div className="inline-block px-2.5 py-0.5 rounded text-[11px] font-mono bg-emerald-950 text-emerald-300 border border-emerald-500/40 mb-3 font-bold">
-                199 FOR INTERNSHIPS · ENROLLMENT
-              </div>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-3xl sm:text-4xl font-extrabold text-white font-mono">
-                  ₹199
-                </span>
-                <span className="text-neutral-400 text-xs font-mono">/ one-time onboarding</span>
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2">
-                Internship Onboarding & Verified Batch Enrollment
-              </h3>
-              <ul className="space-y-2 text-xs text-neutral-300 mt-4">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>Verified registration across your chosen track</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>Batch workspace onboarding & curriculum access</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>Verifiable Certificate of Completion with unique ID</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-                  <span>Recommendation Letter (LOR) eligibility review</span>
-                </li>
-              </ul>
-              <div className="mt-6">
-                <button
-                  onClick={() => handleOpenForm()}
-                  className="w-full block text-center py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-extrabold text-xs transition-colors shadow-md cursor-pointer"
-                >
-                  Apply Now · Onboard as Intern
-                </button>
-              </div>
-            </div>
-
-            {/* Capstone Projects Included Card */}
-            <div className="p-6 rounded-2xl bg-neutral-900 border border-blue-500/50 relative shadow-xl">
-              <div className="inline-block px-2.5 py-0.5 rounded text-[11px] font-mono bg-blue-950 text-blue-300 border border-blue-500/40 mb-3 font-bold">
-                CAPSTONE PROJECTS INCLUDED
-              </div>
-              <div className="flex items-baseline gap-2 mb-2">
-                <span className="text-2xl sm:text-3xl font-extrabold text-white font-mono">
-                  Industry Capstones
-                </span>
-                <span className="text-emerald-400 text-xs font-mono font-bold">Included</span>
-              </div>
-              <h3 className="text-lg font-bold text-white mb-2">
-                Production-Grade Projects & Portfolio Deliverables
-              </h3>
-              <ul className="space-y-2 text-xs text-neutral-300 mt-4">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                  <span>Real enterprise problem statements & architecture blueprints</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                  <span>Automated CI/CD checks & performance benchmarks</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                  <span>Production-grade GitHub repo & showcase artifacts</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                  <span>Verifiable credentials & Letter of Recommendation (LOR)</span>
-                </li>
-              </ul>
-              <div className="mt-6">
-                <button
-                  onClick={() => handleOpenForm()}
-                  className="w-full block text-center py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-extrabold text-xs transition-colors shadow-md cursor-pointer"
-                >
-                  Apply Now · Receive Capstone Projects
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* FAQ Section */}
       <section className="py-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
@@ -740,10 +637,10 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate, onOp
             </div>
 
             <div className="mt-8 pt-4 border-t border-neutral-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <div className="flex sm:flex-col items-center sm:items-start justify-between">
-                <span className="text-xs font-mono text-neutral-400">Internship Onboarding Fee</span>
-                <span className="text-base font-bold font-mono text-white">
-                  ₹{selectedTrack.processingFee}
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-mono font-medium">
+                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                  <span>Batch Cohort 2026 · Official Onboarding</span>
                 </span>
               </div>
               <button

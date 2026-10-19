@@ -6,7 +6,7 @@ import {
 } from '../data/internshipData';
 import { InternshipTrack, PageId } from '../types';
 import { InternshipCredentialsPanel } from '../components/InternshipCredentialsPanel';
-import { ZohoCheckoutModal, ZOHO_CHECKOUT_URL } from '../components/ZohoCheckoutModal';
+import { InternshipOnboardingModal } from '../components/InternshipOnboardingModal';
 import {
   ArrowRight,
   ExternalLink,
@@ -774,18 +774,11 @@ export const InternshipPage: React.FC<InternshipPageProps> = ({ onNavigate, onOp
         </p>
       </div>
 
-      {/* Official Zoho Checkout Embed Modal */}
-      <ZohoCheckoutModal
+      {/* Official Internship Onboarding Form Modal (Elfsight) */}
+      <InternshipOnboardingModal
         isOpen={internalRegTrackId !== null}
         trackTitle={internalRegTrackId || undefined}
         onClose={() => setInternalRegTrackId(null)}
-        onPaymentSuccess={(track) => {
-          window.dispatchEvent(
-            new CustomEvent('dotrepo:payment_success', {
-              detail: { trackTitle: track },
-            })
-          );
-        }}
       />
     </div>
   );

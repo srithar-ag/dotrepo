@@ -19,7 +19,7 @@ import { CareersPage } from './pages/CareersPage';
 import { ContactPage } from './pages/ContactPage';
 import { InternshipPage } from './pages/InternshipPage';
 import { AdminPage } from './pages/AdminPage';
-import { ZohoCheckoutModal } from './components/ZohoCheckoutModal';
+import { InternshipOnboardingModal } from './components/InternshipOnboardingModal';
 import { ToastNotification, ToastData } from './components/ToastNotification';
 
 export default function App() {
@@ -253,12 +253,11 @@ export default function App() {
         onClose={handleCloseContactModal}
       />
 
-      {/* Embedded Zoho Checkout Payment Modal for Internship Applications */}
-      <ZohoCheckoutModal
+      {/* Embedded Internship Onboarding Form Modal (Elfsight) */}
+      <InternshipOnboardingModal
         isOpen={isZohoCheckoutOpen}
         trackTitle={checkoutTrackTitle}
         onClose={() => setIsZohoCheckoutOpen(false)}
-        onPaymentSuccess={handlePaymentSuccess}
       />
 
       {/* Global Payment & Application Success Toast Notification */}

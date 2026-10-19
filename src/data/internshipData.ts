@@ -433,10 +433,10 @@ export const INTERNSHIP_FAQS = [
   },
   {
     q: 'Can I apply for more than one track?',
-    a: 'We recommend focusing on one primary track to build a standout, in-depth portfolio piece. However, you can indicate secondary interests during official enrollment at https://zohosecurepay.in/checkout/n8gqahjg-ynyaxz2dcba44/DotRepo-Internship.',
+    a: 'We recommend focusing on one primary track to build a standout, in-depth portfolio piece. However, you can indicate secondary interests during official enrollment in the Internship Onboarding Form.',
   },
   {
     q: 'How do I register and start?',
-    a: 'Simply click "Apply Now" to open our official Zoho Checkout enrollment portal at https://zohosecurepay.in/checkout/n8gqahjg-ynyaxz2dcba44/DotRepo-Internship. Enter your details, choose your track, and complete your registration.',
+    a: 'Simply click "Apply Now" to open our official Internship Onboarding Form. Enter your details, choose your track, and complete your registration.',
   },
 ];

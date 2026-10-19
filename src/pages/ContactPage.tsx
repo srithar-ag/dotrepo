@@ -310,8 +310,8 @@ export const ContactPage: React.FC<ContactPageProps> = ({ initialTopic, onNaviga
                   <Mail className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                   <div>
                     <span className="text-neutral-500 block font-mono text-[11px]">Direct Enterprise & Inquiries:</span>
-                    <a href="mailto:DOTREPOCORP@GMAIL.COM" className="text-neutral-950 font-bold hover:text-emerald-600 transition-colors">
-                      DOTREPOCORP@GMAIL.COM
+                    <a href="mailto:communications@dotrepo.in" className="text-neutral-950 font-bold hover:text-emerald-600 transition-colors">
+                      communications@dotrepo.in
                     </a>
                   </div>
                 </div>

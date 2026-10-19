@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { X, ShieldCheck, ExternalLink, CheckCircle2 } from 'lucide-react';
+import { X, ShieldCheck, ExternalLink } from 'lucide-react';
 
 interface ZohoCheckoutModalProps {
   isOpen: boolean;
@@ -124,14 +124,6 @@ export const ZohoCheckoutModal: React.FC<ZohoCheckoutModalProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            <button
-              onClick={handleManualConfirm}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 text-xs font-semibold transition-all cursor-pointer"
-              title="Click here if you have finished payment in the checkout window"
-            >
-              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Paid? Confirm</span>
-            </button>
             <a
               href={ZOHO_CHECKOUT_URL}
               target="_blank"

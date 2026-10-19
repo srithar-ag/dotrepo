@@ -229,23 +229,16 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
             <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-6 text-neutral-400 text-xs shrink-0">
               <a
-                href="mailto:DOTREPOCORP@GMAIL.COM"
+                href="mailto:communications@dotrepo.in"
                 className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-900 border border-neutral-700 hover:border-emerald-500/60 text-white hover:text-emerald-300 transition-colors font-mono font-medium shadow-xs"
               >
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                <span>DOTREPOCORP@GMAIL.COM</span>
+                <span>communications@dotrepo.in</span>
               </a>
               <div className="flex items-center gap-2 text-[11px] text-neutral-400">
                 <span>All India Cloud Nodes</span>
                 <span className="text-neutral-600">·</span>
                 <span className="text-emerald-400 font-semibold">Security by Design</span>
-                <span className="text-neutral-600">·</span>
-                <button
-                  onClick={() => onNavigate('admin')}
-                  className="text-neutral-400 hover:text-orange-400 transition-colors font-mono cursor-pointer"
-                >
-                  Admin
-                </button>
               </div>
             </div>
           </div>

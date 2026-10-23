@@ -96,7 +96,7 @@ export const DotRepoLogo: React.FC<DotRepoLogoProps> = ({
               Enterprise
             </span>
           </div>
-          <span className="hidden sm:block text-[10px] text-neutral-400 tracking-wide font-normal mt-0.5">
+          <span className="hidden 2xl:block text-[10px] text-neutral-400 tracking-wide font-normal mt-0.5 whitespace-nowrap">
             Cloud · SaaS · Data · AI · Bangalore, IN
           </span>
         </div>

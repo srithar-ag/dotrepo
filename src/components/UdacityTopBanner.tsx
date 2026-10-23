@@ -16,8 +16,8 @@ export const UdacityTopBanner: React.FC<UdacityTopBannerProps> = ({
   if (dismissed) return null;
 
   return (
-    <div className="relative bg-[#090e18] text-white border-b border-emerald-900/40 text-xs py-2 px-3 sm:px-6 transition-all z-50">
-      <div className="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+    <div className="relative bg-[#090e18] text-white border-b border-emerald-900/40 text-xs py-2 px-3 sm:px-6 lg:px-8 transition-all z-50">
+      <div className="w-full max-w-[1720px] mx-auto flex items-center justify-between gap-2 sm:gap-4">
         {/* Left message with animated beacon */}
         <div className="flex items-center gap-2 text-neutral-200 text-[11px] sm:text-xs truncate">
           <span className="flex items-center justify-center w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-emerald-500/20 text-emerald-400 shrink-0">

@@ -21,9 +21,12 @@ import { InternshipPage } from './pages/InternshipPage';
 import { AdminPage } from './pages/AdminPage';
 import { InternshipOnboardingModal } from './components/InternshipOnboardingModal';
 import { ToastNotification, ToastData } from './components/ToastNotification';
+import { SpawnPage } from './pages/SpawnPage';
+
+type AppPageId = PageId | 'spawn';
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<PageId>('home');
+  const [currentPage, setCurrentPage] = useState<AppPageId>('home');
   const [subId, setSubId] = useState<string | undefined>(undefined);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [contactModalTopic, setContactModalTopic] = useState<string | null>(null);
@@ -31,17 +34,25 @@ export default function App() {
   const [checkoutTrackTitle, setCheckoutTrackTitle] = useState<string | undefined>(undefined);
   const [activeToast, setActiveToast] = useState<ToastData | null>(null);
 
-  // Sync with window.location.hash for shareable URLs and browser back/forward
+  // Sync with window.location.pathname (/spawn) and window.location.hash
   useEffect(() => {
-    const parseHash = () => {
-      const hash = window.location.hash.replace('#', '').trim();
+    const syncRouteFromLocation = () => {
+      // 1. Check pathname (e.g. /spawn or /spawn/)
+      const pathPart = window.location.pathname.replace(/^\//, '').split('/')[0]?.toLowerCase();
+      if (pathPart === 'spawn') {
+        setCurrentPage('spawn');
+        return;
+      }
+
+      // 2. Check hash (e.g. #spawn, #/spawn or #products)
+      const hash = window.location.hash.replace(/^#\/?/, '').trim();
       if (!hash) {
         setCurrentPage('home');
         return;
       }
       const parts = hash.split('/');
-      const pageCandidate = parts[0] as PageId;
-      const validPages: PageId[] = [
+      const pageCandidate = parts[0] as AppPageId;
+      const validPages: AppPageId[] = [
         'home',
         'products',
         'solutions',
@@ -54,6 +65,7 @@ export default function App() {
         'contact',
         'internship',
         'admin',
+        'spawn',
       ];
       if (validPages.includes(pageCandidate)) {
         setCurrentPage(pageCandidate);
@@ -61,22 +73,33 @@ export default function App() {
       }
     };
 
-    parseHash();
-    window.addEventListener('hashchange', parseHash);
-    return () => window.removeEventListener('hashchange', parseHash);
+    syncRouteFromLocation();
+    window.addEventListener('hashchange', syncRouteFromLocation);
+    window.addEventListener('popstate', syncRouteFromLocation);
+    return () => {
+      window.removeEventListener('hashchange', syncRouteFromLocation);
+      window.removeEventListener('popstate', syncRouteFromLocation);
+    };
   }, []);
 
-  const handleNavigate = (page: PageId, newSubId?: string) => {
+  const handleNavigate = (page: PageId | 'spawn', newSubId?: string) => {
     setCurrentPage(page);
     setSubId(newSubId);
 
-    // Update URL hash
-    if (newSubId) {
-      window.location.hash = `${page}/${newSubId}`;
-    } else if (page === 'home') {
+    if (page === 'spawn') {
+      window.history.pushState({}, '', '/spawn');
       window.location.hash = '';
     } else {
-      window.location.hash = page;
+      if (window.location.pathname === '/spawn' || window.location.pathname === '/spawn/') {
+        window.history.pushState({}, '', '/');
+      }
+      if (newSubId) {
+        window.location.hash = `${page}/${newSubId}`;
+      } else if (page === 'home') {
+        window.location.hash = '';
+      } else {
+        window.location.hash = page;
+      }
     }
 
     // Smooth scroll to top of window
@@ -137,22 +160,33 @@ export default function App() {
   return (
     <div className="min-h-screen bg-white text-neutral-900 flex flex-col font-sans selection:bg-blue-600 selection:text-white">
       {/* Top Promotional Announcement Bar */}
-      <UdacityTopBanner
-        onExploreInternship={() => handleNavigate('internship')}
-        onOpenRegistration={() => handleOpenRegistration()}
-      />
+      {currentPage !== 'spawn' && currentPage !== 'cloud' && (
+        <UdacityTopBanner
+          onExploreInternship={() => handleNavigate('internship')}
+          onOpenRegistration={() => handleOpenRegistration()}
+        />
+      )}
 
       {/* DotRepo Corp. Ease & Elegant Enterprise Navigation Bar (Mobile Adaptable) */}
-      <EnterpriseNavbar
-        currentPage={currentPage}
-        onNavigate={handleNavigate}
-        onOpenSearch={() => setIsSearchOpen(true)}
-        onOpenContact={handleOpenContactModal}
-        onOpenRegistration={handleOpenRegistration}
-      />
+      {currentPage !== 'spawn' && currentPage !== 'cloud' && (
+        <EnterpriseNavbar
+          currentPage={currentPage as PageId}
+          onNavigate={(p, s) => handleNavigate(p as PageId, s)}
+          onOpenSearch={() => setIsSearchOpen(true)}
+          onOpenContact={handleOpenContactModal}
+          onOpenRegistration={handleOpenRegistration}
+        />
+      )}
 
       {/* Main Content Area */}
       <main className="flex-1">
+        {currentPage === 'spawn' && (
+          <SpawnPage
+            onNavigate={handleNavigate}
+            onOpenContactModal={handleOpenContactModal}
+          />
+        )}
+
         {currentPage === 'home' && (
           <HomePage
             onNavigate={handleNavigate}
@@ -197,6 +231,7 @@ export default function App() {
           <CloudPage
             onNavigate={handleNavigate}
             onOpenContactModal={handleOpenContactModal}
+            onOpenInternship={() => handleOpenRegistration()}
           />
         )}
 
@@ -237,7 +272,9 @@ export default function App() {
       </main>
 
       {/* Enterprise Global Footer */}
-      <Footer onNavigate={handleNavigate} />
+      {currentPage !== 'spawn' && currentPage !== 'cloud' && (
+        <Footer onNavigate={(p, s) => handleNavigate(p as PageId, s)} />
+      )}
 
       {/* Global Search Palette (Cmd+K) */}
       <SearchModal

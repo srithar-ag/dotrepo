@@ -22,11 +22,12 @@ import {
   Send,
   Home,
   CheckCircle2,
+  Gamepad2,
 } from 'lucide-react';
 
 interface EnterpriseNavbarProps {
-  currentPage: PageId;
-  onNavigate: (page: PageId, subId?: string) => void;
+  currentPage: PageId | 'spawn';
+  onNavigate: (page: PageId | 'spawn', subId?: string) => void;
   onOpenSearch: () => void;
   onOpenContact: (topic?: string) => void;
   onOpenRegistration?: (trackId?: string) => void;
@@ -51,7 +52,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
     { name: 'DotRepo Corp. People', desc: 'Global workforce management, payroll & compliance' },
   ];
 
-  const handleNavClick = (page: PageId, subId?: string) => {
+  const handleNavClick = (page: PageId | 'spawn', subId?: string) => {
     setActiveDropdown(null);
     setMobileMenuOpen(false);
     onNavigate(page, subId);
@@ -62,48 +63,48 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
     <>
       {/* Sticky Main Enterprise Header */}
       <header className="sticky top-0 z-40 w-full bg-[#090b14]/98 backdrop-blur-md text-white border-b border-neutral-800 transition-colors shadow-lg">
-        <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-15 sm:h-18">
+        <div className="w-full max-w-[1720px] mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-15 sm:h-18 gap-2">
             {/* Logo */}
-            <div className="flex items-center gap-4 sm:gap-6 lg:gap-8">
+            <div className="flex items-center gap-2 sm:gap-4 lg:gap-6 shrink-0">
               <button
                 onClick={() => handleNavClick('home')}
-                className="flex items-center gap-2 group text-left cursor-pointer focus:outline-none"
+                className="flex items-center gap-2 group text-left cursor-pointer focus:outline-none shrink-0"
                 aria-label="DotRepo Corp. Enterprise Corporate Platform Home"
               >
                 <DotRepoLogo size="md" showWordmark={true} inverted={true} />
               </button>
 
               {/* Desktop Navigation Links */}
-              <nav className="hidden lg:flex items-center space-x-1" aria-label="Desktop Navigation">
+              <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1 2xl:gap-1.5" aria-label="Desktop Navigation">
                 {/* 1. Cloud */}
                 <button
                   onClick={() => handleNavClick('cloud')}
-                  className={`px-3 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-2 xl:px-2.5 2xl:px-3 py-1.5 text-xs 2xl:text-sm font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1 2xl:gap-1.5 whitespace-nowrap shrink-0 ${
                     currentPage === 'cloud'
                       ? 'text-white bg-neutral-800'
                       : 'text-neutral-300 hover:text-white hover:bg-neutral-800/60'
                   }`}
                 >
-                  <Cloud className="w-4 h-4 text-blue-400" />
+                  <Cloud className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 text-blue-400" />
                   <span>Cloud</span>
                 </button>
 
                 {/* 2. SaaS Enterprise Platform (Dropdown) */}
                 <div
-                  className="relative"
+                  className="relative shrink-0"
                   onMouseEnter={() => setActiveDropdown('saas')}
                   onMouseLeave={() => setActiveDropdown(null)}
                 >
                   <button
                     onClick={() => handleNavClick('products')}
-                    className={`px-3 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                    className={`px-2 xl:px-2.5 2xl:px-3 py-1.5 text-xs 2xl:text-sm font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1 2xl:gap-1.5 whitespace-nowrap shrink-0 ${
                       currentPage === 'products' || activeDropdown === 'saas'
                         ? 'text-white bg-neutral-800'
                         : 'text-neutral-300 hover:text-white hover:bg-neutral-800/60'
                     }`}
                   >
-                    <Layers className="w-4 h-4 text-emerald-400" />
+                    <Layers className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 text-emerald-400" />
                     <span>SaaS Platform</span>
                     <ChevronDown
                       className={`w-3.5 h-3.5 text-neutral-400 transition-transform duration-200 ${
@@ -156,20 +157,20 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                 {/* 3. Data & AI */}
                 <button
                   onClick={() => handleNavClick('ai')}
-                  className={`px-3 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1.5 ${
+                  className={`px-2 xl:px-2.5 2xl:px-3 py-1.5 text-xs 2xl:text-sm font-semibold rounded-lg transition-colors cursor-pointer flex items-center gap-1 2xl:gap-1.5 whitespace-nowrap shrink-0 ${
                     currentPage === 'ai'
                       ? 'text-white bg-neutral-800'
                       : 'text-neutral-300 hover:text-white hover:bg-neutral-800/60'
                   }`}
                 >
-                  <Cpu className="w-4 h-4 text-purple-400" />
+                  <Cpu className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 text-purple-400" />
                   <span>Data & AI</span>
                 </button>
 
                 {/* 4. Solutions */}
                 <button
                   onClick={() => handleNavClick('solutions')}
-                  className={`px-3 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${
+                  className={`px-2 xl:px-2.5 2xl:px-3 py-1.5 text-xs 2xl:text-sm font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                     currentPage === 'solutions'
                       ? 'text-white bg-neutral-800'
                       : 'text-neutral-300 hover:text-white hover:bg-neutral-800/60'
@@ -181,7 +182,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                 {/* 5. Developers */}
                 <button
                   onClick={() => handleNavClick('developers')}
-                  className={`px-3 py-2 text-sm font-semibold rounded-lg transition-colors cursor-pointer ${
+                  className={`px-2 xl:px-2.5 2xl:px-3 py-1.5 text-xs 2xl:text-sm font-semibold rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                     currentPage === 'developers'
                       ? 'text-white bg-neutral-800'
                       : 'text-neutral-300 hover:text-white hover:bg-neutral-800/60'
@@ -193,27 +194,43 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                 {/* 6. INTERNSHIP (Special highlighted tab!) */}
                 <button
                   onClick={() => handleNavClick('internship')}
-                  className={`px-3.5 py-1.5 text-sm font-bold rounded-lg transition-all cursor-pointer flex items-center gap-2 border ${
+                  className={`px-2.5 xl:px-3 py-1.5 text-xs xl:text-sm font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1.5 border whitespace-nowrap shrink-0 ${
                     currentPage === 'internship'
                       ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50 shadow-sm'
                       : 'bg-emerald-950/40 text-emerald-400 border-emerald-500/30 hover:bg-emerald-900/50 hover:text-emerald-200'
                   }`}
                 >
-                  <GraduationCap className="w-4 h-4 text-emerald-400" />
+                  <GraduationCap className="w-3.5 h-3.5 xl:w-4 xl:h-4 text-emerald-400" />
                   <span>Internship</span>
-                  <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-bold">
+                  <span className="hidden 2xl:inline-block text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 font-bold shrink-0">
                     13 Tracks
+                  </span>
+                </button>
+
+                {/* 7. Spawn (Gaming Services) */}
+                <button
+                  onClick={() => handleNavClick('spawn')}
+                  className={`px-2 xl:px-2.5 2xl:px-3 py-1.5 text-xs 2xl:text-sm font-bold rounded-lg transition-all cursor-pointer flex items-center gap-1 2xl:gap-1.5 border whitespace-nowrap shrink-0 ${
+                    currentPage === 'spawn'
+                      ? 'bg-neutral-800 text-[#e4ff4a] border-[#e4ff4a]/50 shadow-sm'
+                      : 'bg-neutral-900/60 text-neutral-300 border-neutral-700/60 hover:text-white hover:border-[#1ea0ff]/60 hover:bg-neutral-800/80'
+                  }`}
+                >
+                  <Gamepad2 className="w-3.5 h-3.5 2xl:w-4 2xl:h-4 text-[#e4ff4a]" />
+                  <span>Spawn</span>
+                  <span className="hidden 2xl:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-500/20 text-[#3ff2c4] border border-blue-500/30 font-bold shrink-0">
+                    Gaming
                   </span>
                 </button>
               </nav>
             </div>
 
             {/* Right Action Icons & Mobile Menu Trigger */}
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
               {/* Search Trigger */}
               <button
                 onClick={onOpenSearch}
-                className="p-2 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors cursor-pointer"
+                className="p-2 text-neutral-300 hover:text-white hover:bg-neutral-800 rounded-lg transition-colors cursor-pointer shrink-0"
                 aria-label="Search Platform"
                 title="Search (Cmd+K)"
               >
@@ -226,16 +243,16 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                   if (onOpenRegistration) onOpenRegistration();
                   else window.location.href = 'https://zohosecurepay.in/checkout/n8gqahjg-ynyaxz2dcba44/DotRepo-Internship';
                 }}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs transition-colors shadow-sm cursor-pointer"
+                className="hidden sm:inline-flex items-center gap-1.5 px-3 xl:px-3.5 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-neutral-950 font-bold text-xs transition-colors shadow-sm cursor-pointer uppercase tracking-wider whitespace-nowrap shrink-0"
               >
-                <span>Apply as Intern</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                <span>INTERN NOW</span>
+                <ArrowRight className="w-3.5 h-3.5 shrink-0" />
               </button>
 
               {/* Contact / Enterprise Schedule Button (Desktop) */}
               <button
                 onClick={() => onOpenContact('sales')}
-                className="hidden sm:inline-flex px-3.5 py-2 text-xs font-semibold text-neutral-200 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded-lg transition-colors cursor-pointer"
+                className="hidden sm:inline-flex px-3 xl:px-3.5 py-2 text-xs font-semibold text-neutral-200 hover:text-white bg-neutral-900 hover:bg-neutral-800 border border-neutral-700 rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0"
               >
                 Contact
               </button>
@@ -243,7 +260,7 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
               {/* Defined Mobile Menu Button (Clear Pill with Label & Icon) */}
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="lg:hidden flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-neutral-900 border border-neutral-700 hover:border-emerald-500/60 text-neutral-200 hover:text-white transition-all cursor-pointer focus:outline-none"
+                className="lg:hidden flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-neutral-900 border border-neutral-700 hover:border-emerald-500/60 text-neutral-200 hover:text-white transition-all cursor-pointer focus:outline-none shrink-0"
                 aria-label={mobileMenuOpen ? 'Close Navigation Menu' : 'Open Navigation Menu'}
               >
                 {mobileMenuOpen ? (
@@ -334,6 +351,22 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                   : 'bg-emerald-500/25 text-emerald-300 font-bold'
               }`}>
                 13 Tracks
+              </span>
+            </button>
+
+            {/* Spawn (Gaming Practice Page) */}
+            <button
+              onClick={() => handleNavClick('spawn')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-bold rounded-md transition-all cursor-pointer whitespace-nowrap border ${
+                currentPage === 'spawn'
+                  ? 'bg-neutral-800 text-[#e4ff4a] border-[#e4ff4a]/80 shadow-xs'
+                  : 'bg-neutral-900/80 text-neutral-200 border-neutral-700/80 hover:border-[#1ea0ff] hover:text-white'
+              }`}
+            >
+              <Gamepad2 className="w-3 h-3 text-[#e4ff4a]" />
+              <span>Spawn</span>
+              <span className="text-[9px] font-mono px-1 py-0.2 rounded bg-[#e4ff4a] text-black font-extrabold uppercase">
+                Gaming
               </span>
             </button>
 
@@ -536,6 +569,23 @@ export const EnterpriseNavbar: React.FC<EnterpriseNavbarProps> = ({
                     <span>Industry Blueprints</span>
                   </div>
                   <ArrowRight className="w-3.5 h-3.5 text-neutral-500" />
+                </button>
+
+                <button
+                  onClick={() => handleNavClick('spawn')}
+                  className={`w-full text-left px-3 py-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors ${
+                    currentPage === 'spawn'
+                      ? 'bg-neutral-800 text-[#e4ff4a] border border-[#e4ff4a]/50'
+                      : 'text-neutral-300 hover:text-white hover:bg-neutral-800/60'
+                  }`}
+                >
+                  <div className="flex items-center gap-2.5">
+                    <Gamepad2 className="w-4 h-4 text-[#e4ff4a]" />
+                    <span>DotRepo Spawn (Gaming & Backend)</span>
+                  </div>
+                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-blue-500/20 text-[#3ff2c4] font-bold">
+                    NEW
+                  </span>
                 </button>
               </div>
             </div>

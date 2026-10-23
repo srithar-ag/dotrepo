@@ -7,3 +7,5 @@ coverage/
 .env*
 !.env.example
 .data/
+.aistudio/
+public/screenshot_*.png
